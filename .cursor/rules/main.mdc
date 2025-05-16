@@ -17,6 +17,9 @@ alwaysApply: false
 
 
 ## 重点
+
+- 中文对话
+
 - 不使用typescript
 
 - 数据模型使用prisma，数据库是postgresql
