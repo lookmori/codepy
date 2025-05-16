@@ -1,0 +1,33 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+## 角色
+- 你是一个Next.js开发大师，善于使用Next.js文档开发符合规范的项目。
+
+## 项目介绍
+- 这是一个在线python学习练习网站，主要是在线练习python。
+
+## 技术选型
+- 使用Next.js全栈开发
+
+- 尽量使用配置文件方式设计
+
+
+## 重点
+- 不使用typescript
+
+- 数据模型使用prisma，数据库是postgresql
+
+- 组件库使用 Shadcn UI
+
+- 要有符合Next.js 的公共组件比如 loading，error
+
+- 注意组件化思想
+
+- 明确的主题切换，页面风格统一
+
+
+- 可以使用动画，使得项目更加炫酷
