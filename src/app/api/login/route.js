@@ -1,6 +1,9 @@
-import { neon } from '@neondatabase/serverless';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import prisma from '@/lib/prisma';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret';
 
 // 验证密码
 function verifyPassword(storedPassword, suppliedPassword) {
@@ -24,31 +27,59 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
-    // 连接数据库
-    console.log('尝试连接数据库...');
-    const DATABASE_URL = process.env.DATABASE_URL;
-    if (!DATABASE_URL) {
-      console.error('缺少DATABASE_URL环境变量');
-      return NextResponse.json(
-        { error: '服务器配置错误' },
-        { status: 500 }
-      );
-    }
-    console.log('数据库URL格式检查:', DATABASE_URL.substring(0, 10) + '...');
+        // 从环境变量获取管理员账号信息
+        const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+        const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+    
+        // 检查是否是管理员登录
+        if (ADMIN_EMAIL && ADMIN_PASSWORD && email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+          console.log('检测到管理员登录，跳过数据库验证');
+          const adminUser = {
+            id: 'admin-id', // 可以使用一个固定的ID或者生成一个
+            email: ADMIN_EMAIL,
+            name: process.env.ADMIN_NAME || '管理员',
+            role: 'ADMIN',
+            // 其他管理员可能需要的字段...
+          };
+    
+          // 生成 JWT token
+          const token = jwt.sign(
+            {
+              userId: adminUser.id,
+              email: adminUser.email,
+              role: adminUser.role
+            },
+            JWT_SECRET,
+            { expiresIn: '7d' }
+          );
+    
+          // 返回用户信息和token
+          return NextResponse.json({
+            user: {
+              id: adminUser.id,
+              email: adminUser.email,
+              name: adminUser.name,
+              role: adminUser.role,
+              isAdmin: true,
+              isTeacher: false // 管理员不是教师，如果需要可以修改
+            },
+            token
+          });
+        }
+    
+        // 如果不是管理员，继续正常的数据库查询和密码验证
 
     try {
-      // 使用正确的查询方式 - 标签模板字符串
-      const sql = neon(DATABASE_URL);
-      console.log('数据库客户端已创建');
-      
-      // 查找用户 - 使用标签模板字符串语法
       console.log('开始查询用户:', email);
-      const users = await sql`SELECT * FROM "User" WHERE email = ${email}`;
       
-      console.log('查询结果:', users ? `找到${users.length}个用户` : '没有结果');
+      // 使用Prisma查找用户
+      const user = await prisma.user.findUnique({
+        where: { email }
+      });
       
-      if (!users || users.length === 0) {
+      console.log('查询结果:', user ? '找到用户' : '没有结果');
+      
+      if (!user) {
         console.log('未找到用户');
         return NextResponse.json(
           { error: '邮箱或密码不正确' },
@@ -56,7 +87,6 @@ export async function POST(request) {
         );
       }
       
-      const user = users[0];
       console.log('找到用户:', user.username);
       
       // 验证密码
@@ -78,20 +108,35 @@ export async function POST(request) {
       const userData = {
         ...userWithoutPassword,
         name: userWithoutPassword.name || userWithoutPassword.username,
-        isAdmin: user.role === 'admin' // 添加一个便于前端判断的字段
+        isAdmin: user.role === 'ADMIN', // 更新为新的枚举值
+        isTeacher: user.role === 'TEACHER' // 添加教师角色判断
       };
       
       console.log('用户数据处理完成:', userData);
       
-      // 成功响应
-      const responseData = {
-        success: true,
-        message: '登录成功',
-        user: userData
-      };
-      console.log('准备返回成功响应');
-      
-      return NextResponse.json(responseData);
+      // 生成 JWT token
+      const token = jwt.sign(
+        { 
+          userId: user.id,
+          email: user.email,
+          role: user.role
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      // 返回用户信息和token
+      return NextResponse.json({
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          isAdmin: user.role === 'ADMIN',
+          isTeacher: user.role === 'TEACHER'
+        },
+        token
+      });
     } catch (dbError) {
       console.error('数据库查询错误:', dbError);
       return NextResponse.json(

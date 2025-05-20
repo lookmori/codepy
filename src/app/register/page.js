@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Loading from '@/components/Loading';
+import Error from '@/components/Error';
+import Button from '@/components/Button';
 
 export default function Register() {
   const router = useRouter();
@@ -91,7 +94,7 @@ export default function Register() {
             name: formData.name,
             email: formData.email,
             password: formData.password,
-            role: 'student' // 默认角色为学生
+            role: 'STUDENT' // 默认角色为学生
           }),
         });
         
@@ -196,9 +199,7 @@ export default function Register() {
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             {serverError && (
-              <div className="mb-4 bg-red-50 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-300 p-4" role="alert">
-                <p>{serverError}</p>
-              </div>
+              <Error message={serverError} />
             )}
             
             <form className="space-y-6" onSubmit={handleSubmit} noValidate>
@@ -308,25 +309,15 @@ export default function Register() {
               </div>
               
               <div>
-                <button
+                <Button
                   type="submit"
+                  fullWidth
+                  loading={isLoading}
                   disabled={isLoading}
-                  className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                    isLoading 
-                      ? 'bg-blue-400 dark:bg-blue-600 cursor-not-allowed' 
-                      : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                  }`}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium"
                 >
-                  {isLoading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      处理中...
-                    </>
-                  ) : '注册'}
-                </button>
+                  注册
+                </Button>
               </div>
             </form>
           </div>

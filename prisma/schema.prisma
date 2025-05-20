@@ -6,10 +6,58 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  studentExerciseStatuses StudentExerciseStatus[]
+
+  @@map("User")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+model Exercise {
+  id                  String   @id @default(uuid())
+  title               String
+  difficulty          String
+  example_input       String
+  example_output      String
+  problem_description String
+  problem_tag         String
+
+  // 关联答题记录
+  answers             StudentExerciseStatus[]
+
+  @@map("Exercise")
+}
+
+model StudentExerciseStatus {
+  user        User     @relation(fields: [user_id], references: [id])
+  user_id     String
+  exercise    Exercise @relation(fields: [exercise_id], references: [id])
+  exercise_id String
+  status      String   // 未作/正确/错误
+  answer      String   // 可存文本或JSON
+  last_code   String?  // 新增：最后一次提交的代码
+  submit_time DateTime @default(now())
+
+  @@id([user_id, exercise_id])
+  @@map("StudentExerciseStatus")
 }

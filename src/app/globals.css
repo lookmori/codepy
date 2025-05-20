@@ -2,30 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 明亮主题变量 */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card-bg: #f9fafb;
+  --card-border: #e5e7eb;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --force-repaint: 0;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 暗黑主题变量 */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card-bg: #1f2937;
+  --card-border: #374151;
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  color-scheme: dark;
 }
 
-html,
-body {
+/* 防止主题切换时闪烁 */
+html {
   max-width: 100vw;
   overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+html.theme-transition * {
+  transition: background-color 0.25s ease, 
+              border-color 0.25s ease, 
+              color 0.25s ease,
+              fill 0.25s ease,
+              stroke 0.25s ease,
+              opacity 0.25s ease,
+              box-shadow 0.25s ease !important;
+}
+
+/* 添加主题过渡效果 */
 body {
-  color: var(--foreground);
-  background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+}
+
+/* 移除 GSAP 动画的主题过渡冲突 */
+body * {
+  transition: background-color 0.25s ease, 
+              border-color 0.25s ease, 
+              color 0.25s ease !important;
 }
 
 * {
@@ -40,7 +71,109 @@ a {
 }
 
 @media (prefers-color-scheme: dark) {
-  html {
+  html:not(.light) {
     color-scheme: dark;
   }
+}
+
+/* 自定义主题切换过渡类 */
+.theme-transition-bg {
+  transition: background-color 0.25s ease;
+}
+
+.theme-transition-text {
+  transition: color 0.25s ease;
+}
+
+.theme-transition-border {
+  transition: border-color 0.25s ease;
+}
+
+/* 避免闪烁的滤镜 */
+.no-flash {
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+}
+
+/* Custom animations */
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(3deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Code icon styling */
+.code-icon polyline {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+}
+
+/* Cube faces animation */
+.cube-face {
+  transition: all 0.5s;
+}
+
+.cube-face:hover {
+  filter: brightness(1.2);
+}
+
+/* Terminal icon styling */
+.terminal-icon polyline {
+  animation: terminal-blink 1.5s ease-in-out infinite;
+}
+
+@keyframes terminal-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Gradient text animation */
+.bg-gradient-text {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
 }

@@ -1,6 +1,6 @@
-import { neon } from '@neondatabase/serverless';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import prisma from '@/lib/prisma';
 
 // 密码哈希函数
 function hashPassword(password) {
@@ -50,14 +50,13 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
-    // 连接数据库
-    const sql = neon(process.env.DATABASE_URL);
     
     // 检查邮箱是否存在
-    const existingUser = await sql`SELECT * FROM "User" WHERE email = ${email}`;
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
+    });
     
-    if (!existingUser || existingUser.length === 0) {
+    if (!existingUser) {
       return NextResponse.json(
         { error: '该邮箱未注册' },
         { status: 404 }
@@ -68,7 +67,10 @@ export async function POST(request) {
     const hashedPassword = hashPassword(newPassword);
     
     // 更新密码
-    await sql`UPDATE "User" SET password = ${hashedPassword} WHERE email = ${email}`;
+    await prisma.user.update({
+      where: { email },
+      data: { password: hashedPassword }
+    });
     
     // 成功响应
     return NextResponse.json(

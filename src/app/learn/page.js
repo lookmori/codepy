@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Button from '@/components/Button';
 
 export default function Learn() {
   const [activeTab, setActiveTab] = useState('courses');
@@ -125,36 +126,27 @@ export default function Learn() {
       
       {/* 选项卡 */}
       <div className="flex justify-center mb-8 border-b border-gray-200 dark:border-gray-700">
-        <button
+        <Button
           onClick={() => setActiveTab('courses')}
-          className={`py-3 px-6 font-medium ${
-            activeTab === 'courses'
-              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-          }`}
+          variant={activeTab === 'courses' ? 'primary' : 'secondary'}
+          className={`py-3 px-6 font-medium border-b-2 ${activeTab === 'courses' ? 'border-blue-600 dark:border-blue-400' : ''}`}
         >
           课程
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setActiveTab('articles')}
-          className={`py-3 px-6 font-medium ${
-            activeTab === 'articles'
-              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-          }`}
+          variant={activeTab === 'articles' ? 'primary' : 'secondary'}
+          className={`py-3 px-6 font-medium border-b-2 ${activeTab === 'articles' ? 'border-blue-600 dark:border-blue-400' : ''}`}
         >
           文章
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setActiveTab('videos')}
-          className={`py-3 px-6 font-medium ${
-            activeTab === 'videos'
-              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-          }`}
+          variant={activeTab === 'videos' ? 'primary' : 'secondary'}
+          className={`py-3 px-6 font-medium border-b-2 ${activeTab === 'videos' ? 'border-blue-600 dark:border-blue-400' : ''}`}
         >
           视频
-        </button>
+        </Button>
       </div>
       
       {/* 课程内容 */}
@@ -177,9 +169,9 @@ export default function Learn() {
                   <span>{course.duration}</span>
                   <span>{course.level}</span>
                 </div>
-                <button className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors dark:bg-blue-500 dark:hover:bg-blue-600">
+                <Button className="w-full py-2 px-4" variant="primary">
                   开始学习
-                </button>
+                </Button>
               </div>
             </div>
           ))}
@@ -198,9 +190,9 @@ export default function Learn() {
                 <span>作者: {article.author}</span>
                 <span>阅读时间: {article.readTime}</span>
               </div>
-              <button className="mt-4 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors dark:bg-blue-500 dark:hover:bg-blue-600">
+              <Button className="mt-4 py-2 px-4" variant="primary">
                 阅读全文
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -232,9 +224,9 @@ export default function Learn() {
                   <span>{video.views} 次观看</span>
                   <span>{video.date}</span>
                 </div>
-                <button className="w-full mt-4 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors dark:bg-blue-500 dark:hover:bg-blue-600">
+                <Button className="w-full mt-4 py-2 px-4" variant="primary">
                   观看视频
-                </button>
+                </Button>
               </div>
             </div>
           ))}

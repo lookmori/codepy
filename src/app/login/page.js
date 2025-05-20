@@ -3,6 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Loading from '@/components/Loading';
+import Error from '@/components/Error';
+import Button from '@/components/Button';
+import Modal from '@/components/Modal';
 
 export default function Login() {
   const router = useRouter();
@@ -228,7 +232,6 @@ export default function Login() {
       // 登录成功，存储用户信息
       console.log('登录成功，存储用户信息');
       console.log('用户数据结构:', data.user);
-      console.log('用户名:', data.user.username || data.user.name);
       
       // 确保先移除旧数据，然后再设置新数据（避免可能的缓存问题）
       localStorage.removeItem('user');
@@ -257,7 +260,7 @@ export default function Login() {
       window.dispatchEvent(new Event('auth-change'));
       
       // 设置cookie以便中间件可以使用
-      setCookie('auth-token', 'authenticated', formData.remember ? 30 : 1);
+      setCookie('auth-token', data.token, formData.remember ? 30 : 1);
       setCookie('user-role', data.user.role, formData.remember ? 30 : 1);
       
       // 登录成功，重定向到首页
@@ -280,145 +283,90 @@ export default function Login() {
   };
 
   // 忘记密码模态框
-  const ResetPasswordModal = () => {
-    if (!showResetModal) return null;
-    
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-              {resetSuccess ? '密码重置成功' : '重置密码'}
-            </h3>
-            <button
-              onClick={() => setShowResetModal(false)}
-              className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-              type="button"
-              aria-label="关闭"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          
-          {resetSuccess ? (
-            <div className="text-center py-8">
-              <svg className="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">密码已成功重置！</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">请使用新密码登录您的账号。</p>
-            </div>
-          ) : (
-            <form onSubmit={handleResetSubmit}>
-              {resetErrors.form && (
-                <div className="mb-4 bg-red-50 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-300 p-4">
-                  <p>{resetErrors.form}</p>
-                </div>
-              )}
-              
-              <div className="mb-4">
-                <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  邮箱地址 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="reset-email"
-                  name="email"
-                  type="email"
-                  value={resetFormData.email}
-                  onChange={handleResetChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${
-                    resetErrors.email ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'
-                  } rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
-                  placeholder="请输入您的邮箱地址"
-                  required
-                />
-                {resetErrors.email && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{resetErrors.email}</p>
-                )}
-              </div>
-              
-              <div className="mb-4">
-                <label htmlFor="reset-new-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  新密码 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="reset-new-password"
-                  name="newPassword"
-                  type="password"
-                  value={resetFormData.newPassword}
-                  onChange={handleResetChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${
-                    resetErrors.newPassword ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'
-                  } rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
-                  placeholder="请输入新密码"
-                  required
-                  minLength="6"
-                />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  密码长度至少为6个字符
-                </p>
-                {resetErrors.newPassword && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{resetErrors.newPassword}</p>
-                )}
-              </div>
-              
-              <div className="mb-6">
-                <label htmlFor="reset-confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  确认新密码 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="reset-confirm-password"
-                  name="confirmPassword"
-                  type="password"
-                  value={resetFormData.confirmPassword}
-                  onChange={handleResetChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${
-                    resetErrors.confirmPassword ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'
-                  } rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
-                  placeholder="请再次输入新密码"
-                  required
-                />
-                {resetErrors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{resetErrors.confirmPassword}</p>
-                )}
-              </div>
-              
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowResetModal(false)}
-                  className="mr-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  取消
-                </button>
-                <button
-                  type="submit"
-                  disabled={resetLoading}
-                  className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                    resetLoading 
-                      ? 'bg-blue-400 dark:bg-blue-600 cursor-not-allowed' 
-                      : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                  }`}
-                >
-                  {resetLoading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      处理中...
-                    </>
-                  ) : '重置密码'}
-                </button>
-              </div>
-            </form>
-          )}
+  const ResetPasswordModal = () => (
+    <Modal isOpen={showResetModal} onClose={() => setShowResetModal(false)} title={resetSuccess ? '密码重置成功' : '重置密码'}>
+      {resetSuccess ? (
+        <div className="text-center py-8">
+          <svg className="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">密码已成功重置！</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">请使用新密码登录您的账号。</p>
         </div>
-      </div>
-    );
-  };
+      ) : (
+        <form onSubmit={handleResetSubmit}>
+          {resetErrors.form && <Error message={resetErrors.form} />}
+          <div className="mb-4">
+            <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              邮箱地址 <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="reset-email"
+              name="email"
+              type="email"
+              value={resetFormData.email}
+              onChange={handleResetChange}
+              className={`appearance-none block w-full px-3 py-2 border ${resetErrors.email ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'} rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
+              placeholder="请输入您的邮箱地址"
+              required
+            />
+            {resetErrors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{resetErrors.email}</p>}
+          </div>
+          <div className="mb-4">
+            <label htmlFor="reset-new-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              新密码 <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="reset-new-password"
+              name="newPassword"
+              type="password"
+              value={resetFormData.newPassword}
+              onChange={handleResetChange}
+              className={`appearance-none block w-full px-3 py-2 border ${resetErrors.newPassword ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'} rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
+              placeholder="请输入新密码"
+              required
+              minLength="6"
+            />
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">密码长度至少为6个字符</p>
+            {resetErrors.newPassword && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{resetErrors.newPassword}</p>}
+          </div>
+          <div className="mb-6">
+            <label htmlFor="reset-confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              确认新密码 <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="reset-confirm-password"
+              name="confirmPassword"
+              type="password"
+              value={resetFormData.confirmPassword}
+              onChange={handleResetChange}
+              className={`appearance-none block w-full px-3 py-2 border ${resetErrors.confirmPassword ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'} rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
+              placeholder="请再次输入新密码"
+              required
+            />
+            {resetErrors.confirmPassword && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{resetErrors.confirmPassword}</p>}
+          </div>
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="secondary"
+              className="mr-2"
+              onClick={() => setShowResetModal(false)}
+            >
+              取消
+            </Button>
+            <Button
+              type="submit"
+              loading={resetLoading}
+              disabled={resetLoading}
+            >
+              重置密码
+            </Button>
+          </div>
+        </form>
+      )}
+    </Modal>
+  );
   
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -546,18 +494,8 @@ export default function Login() {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            {error && (
-              <div className="mb-4 bg-red-50 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-300 p-4" role="alert">
-                <p>{error}</p>
-              </div>
-            )}
-            
-            {successMessage && (
-              <div className="mb-4 bg-green-50 dark:bg-green-900 border-l-4 border-green-500 text-green-700 dark:text-green-300 p-4" role="alert">
-                <p>{successMessage}</p>
-              </div>
-            )}
-            
+            {error && <Error message={error} />}
+            {successMessage && <Error message={successMessage} title="成功" />}
             <form className="space-y-6" onSubmit={handleSubmit} noValidate>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -635,32 +573,21 @@ export default function Login() {
               </div>
 
               <div>
-                <button
+                <Button
                   type="submit"
+                  fullWidth
+                  loading={isLoading}
                   disabled={isLoading}
-                  className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                    isLoading 
-                      ? 'bg-blue-400 dark:bg-blue-600 cursor-not-allowed' 
-                      : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                  }`}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium"
                 >
-                  {isLoading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      正在登录...
-                    </>
-                  ) : '登录'}
-                </button>
+                  登录
+                </Button>
               </div>
             </form>
           </div>
         </div>
       </div>
       
-      {/* 忘记密码模态框 */}
       <ResetPasswordModal />
     </div>
   );

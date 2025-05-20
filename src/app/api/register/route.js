@@ -1,6 +1,6 @@
-import { neon } from '@neondatabase/serverless';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import prisma from '@/lib/prisma';
 
 // 密码哈希函数
 function hashPassword(password) {
@@ -28,7 +28,7 @@ function validatePassword(password) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, email, password, role = 'student' } = body;
+    const { name, email, password, role = 'STUDENT' } = body;
 
     // 验证数据
     const validationErrors = {};
@@ -63,20 +63,19 @@ export async function POST(request) {
     }
 
     // 验证角色
-    if (role !== 'student' && role !== 'admin') {
+    if (role !== 'STUDENT' && role !== 'TEACHER' && role !== 'ADMIN') {
       return NextResponse.json(
-        { error: '角色无效，必须是 student 或 admin' },
+        { error: '角色无效，必须是 STUDENT、TEACHER 或 ADMIN' },
         { status: 400 }
       );
     }
-
-    // 连接数据库
-    const sql = neon(process.env.DATABASE_URL);
     
     // 检查邮箱是否已存在
-    const existingUser = await sql`SELECT * FROM "User" WHERE email = ${email}`;
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
+    });
     
-    if (existingUser && existingUser.length > 0) {
+    if (existingUser) {
       return NextResponse.json(
         { error: '该邮箱已注册' },
         { status: 409 }
@@ -87,7 +86,14 @@ export async function POST(request) {
     const hashedPassword = hashPassword(password);
     
     // 创建用户
-    await sql`INSERT INTO "User" (username, email, password, role) VALUES (${name}, ${email}, ${hashedPassword}, ${role})`;
+    await prisma.user.create({
+      data: {
+        username: name,
+        email,
+        password: hashedPassword,
+        role
+      }
+    });
     
     // 成功响应
     return NextResponse.json(
