@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
 
-const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret';
 
 function getUserFromRequest(request) {
@@ -35,13 +34,19 @@ export async function GET(request) {
     const exercises = await prisma.exercise.findMany();
 
     if (user.role === 'STUDENT') {
-      const statuses = await prisma.studentExerciseStatus.findMany({
-        where: { user_id: user.id }
+      // 联表查询每道题的当前用户答题状态，字段名为 answers
+      const exercises = await prisma.exercise.findMany({
+        include: {
+          answers: {
+            where: { user_id: user.id },
+            select: { status: true }
+          }
+        }
       });
-      const statusMap = new Map(statuses.map(s => [s.exercise_id, s.status]));
       const result = exercises.map(q => ({
         ...q,
-        status: statusMap.get(q.id) || '未作'
+        status: q.answers[0]?.status || '未作',
+        answers: undefined // 可选：去掉冗余字段
       }));
       return NextResponse.json({ exercises: result });
     } else {

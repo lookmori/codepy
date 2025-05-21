@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import MonacoEditor, { loader } from '@monaco-editor/react';
 import Button from '@/components/Button';
+import Toast, { useToast } from '@/components/Toast';
 
 // Monaco Editor 只用本地资源
 loader.config({
@@ -21,6 +22,7 @@ export default function PracticeDetail() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
   const [editorTheme, setEditorTheme] = useState('vs-dark');
+  const { addToast } = useToast();
 
   useEffect(() => {
     // 获取题目信息
@@ -43,10 +45,30 @@ export default function PracticeDetail() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
       });
-      const data = await res.json();
-      setResult(data);
+      let data = {};
+      try {
+        data = await res.json();
+      } catch {
+        // 解析失败，data 保持为空对象
+      }
+      if (res.ok) {
+        setResult(data);
+        addToast({ type: data.code_status ? 'success' : 'error', title: '评测结果', message: data.code_status ? '答案正确' : (data.code_error || '答案错误') });
+      } else {
+        setResult({ error: data.error || '提交失败，请重试', ...data });
+        addToast({ type: 'error', title: '提交失败', message: data.error || '提交失败，请重试' });
+      }
     } catch (e) {
-      setResult({ error: '提交失败，请重试' });
+      // 尝试解析后端返回的错误信息
+      let errorMsg = '提交失败，请重试';
+      if (e && e.response) {
+        try {
+          const errData = await e.response.json();
+          errorMsg = errData.error || errorMsg;
+        } catch {}
+      }
+      addToast({ type: 'error', title: '提交失败', message: errorMsg });
+      setResult({ error: errorMsg });
     }
     setSubmitting(false);
   };
@@ -154,7 +176,20 @@ export default function PracticeDetail() {
             ) : (
               <div>
                 <div className="font-semibold mb-1">评测结果：</div>
-                <pre className="whitespace-pre-wrap text-base">{result.output}</pre>
+                <div className={result.code_status ? "text-green-600 dark:text-green-300 font-bold" : "text-red-500 font-bold"}>
+                  {result.code_status ? "答案正确！" : "答案错误"}
+                </div>
+                {result.code_error && (
+                  <div className="mt-2 text-red-500">错误信息：{result.code_error}</div>
+                )}
+                {result.msg && (
+                  <div className="mt-2 text-gray-500">系统消息：{result.msg}</div>
+                )}
+                {result.debug_url && (
+                  <div className="mt-2">
+                    <a href={result.debug_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">查看判题详情</a>
+                  </div>
+                )}
               </div>
             )}
           </div>

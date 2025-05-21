@@ -45,7 +45,7 @@ export async function POST(request) {
           // 生成 JWT token
           const token = jwt.sign(
             {
-              userId: adminUser.id,
+              id: adminUser.id,
               email: adminUser.email,
               role: adminUser.role
             },
@@ -119,11 +119,11 @@ export async function POST(request) {
       // 生成 JWT token
       const token = jwt.sign(
         { 
-          userId: user.id,
+          id: user.id,
           email: user.email,
           role: user.role
         },
-        process.env.JWT_SECRET,
+        JWT_SECRET,
         { expiresIn: '7d' }
       );
 

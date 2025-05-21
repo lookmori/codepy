@@ -350,9 +350,11 @@ export default function Practice() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {/* 状态：未作/正确/错误，未作为灰色，正确为绿色，错误为红色 */}
-                    {exercise.status === '正确' ? (
-                      <span className="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">正确</span>
+                    {/* 状态：未作/已通过/已提交/错误，未作为灰色，已通过为绿色，已提交为蓝色，错误为红色 */}
+                    {exercise.status === '已通过' ? (
+                      <span className="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">已通过</span>
+                    ) : exercise.status === '已提交' ? (
+                      <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200">已提交</span>
                     ) : exercise.status === '错误' ? (
                       <span className="px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200">错误</span>
                     ) : (
