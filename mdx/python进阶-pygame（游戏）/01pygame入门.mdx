@@ -1,0 +1,31 @@
+---
+title: Pygame 入门
+---
+
+# Pygame 入门
+
+Pygame 是一个用于开发 2D 游戏的 Python 库。
+
+## 安装
+
+```bash
+pip install pygame
+```
+
+## 创建第一个窗口
+
+```python
+import pygame
+pygame.init()
+screen = pygame.display.set_mode((640, 480))
+pygame.display.set_caption('Hello Pygame')
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+pygame.quit()
+```
+
+> 运行上面的代码，你会看到一个简单的窗口！

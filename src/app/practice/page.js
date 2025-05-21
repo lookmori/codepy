@@ -28,6 +28,8 @@ export default function Practice() {
   const [errorMsg, setErrorMsg] = useState('');
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [executing, setExecuting] = useState(false);
+  const [shouldAutoExecute, setShouldAutoExecute] = useState(false);
   
   const levels = ['初级', '中级', '高级'];
   const categories = ['前端', '后端', '数据库', '算法', '机器学习'];
@@ -69,6 +71,8 @@ export default function Practice() {
   // 执行工作流
   const executeWorkflow = async () => {
     if (!accessToken) {
+      // 存储内容和标志到 localStorage
+      localStorage.setItem('pendingWorkflow', workflowContent);
       setPendingWorkflow(workflowContent);
       window.location.href = COZE_AUTH_URL;
       return;
@@ -81,6 +85,7 @@ export default function Practice() {
       });
       return;
     }
+    setExecuting(true);
     try {
       const res = await fetch('https://api.coze.cn/v1/workflow/run', {
         method: 'POST',
@@ -96,23 +101,24 @@ export default function Practice() {
         }),
       });
       const data = await res.json();
-      // 新增日志：打印完整 data
       console.log('Coze工作流原始响应:', data);
       if (!res.ok) {
         if (res.status === 401) {
           setAccessToken(null);
           localStorage.removeItem('coze_access_token');
+          localStorage.setItem('pendingWorkflow', workflowContent);
           setPendingWorkflow(workflowContent);
           window.location.href = COZE_AUTH_URL;
+          setExecuting(false);
           return;
         }
         setErrorMsg(data.error || data.msg || '工作流执行失败');
         setShowModal(false);
         setWorkflowContent('');
         setPendingWorkflow(null);
+        setExecuting(false);
         return;
       }
-      // 解析 data.data 字符串，提取 output 数组
       let questions = [];
       if (typeof data.data === 'string') {
         try {
@@ -121,7 +127,6 @@ export default function Practice() {
           console.log('Coze工作流 data.data 解析后:', parsed);
           if (Array.isArray(parsed.output)) {
             questions = parsed.output;
-            // 打印解析后的内容
             console.log('Coze工作流解析后 output:', parsed.output);
           }
         } catch (e) {
@@ -133,6 +138,7 @@ export default function Practice() {
           setShowModal(false);
           setWorkflowContent('');
           setPendingWorkflow(null);
+          setExecuting(false);
           return;
         }
       }
@@ -145,6 +151,7 @@ export default function Practice() {
         setShowModal(false);
         setWorkflowContent('');
         setPendingWorkflow(null);
+        setExecuting(false);
         return;
       }
       setWorkflowResult(questions);
@@ -156,11 +163,13 @@ export default function Practice() {
         type: 'danger',
       });
     }
+    setExecuting(false);
     setShowModal(false);
     setWorkflowContent('');
     setPendingWorkflow(null);
+    localStorage.removeItem('pendingWorkflow');
   };
-
+  
   // 检查URL code参数，自动换取access_token
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -176,14 +185,14 @@ export default function Practice() {
           if (data.access_token) {
             setAccessToken(data.access_token);
             localStorage.setItem('coze_access_token', data.access_token);
-            // 清理URL参数
             url.searchParams.delete('code');
             window.history.replaceState({}, '', url.pathname);
-            
-            // 如果有待处理的工作流，重新打开模态框
-            if (pendingWorkflow) {
-              setWorkflowContent(pendingWorkflow);
+            // 检查 localStorage 是否有 pendingWorkflow
+            const pending = localStorage.getItem('pendingWorkflow');
+            if (pending) {
+              setWorkflowContent(pending);
               setShowModal(true);
+              setShouldAutoExecute(true); // 只设置标志，不直接执行
             }
           } else {
             addToast({
@@ -194,12 +203,20 @@ export default function Practice() {
           }
         });
     } else {
-      // 尝试从localStorage恢复token
       const token = localStorage.getItem('coze_access_token');
       if (token) setAccessToken(token);
     }
   }, []);
-  
+
+  // 新增：监听 shouldAutoExecute+accessToken+workflowContent，满足条件时自动执行
+  useEffect(() => {
+    if (shouldAutoExecute && accessToken && workflowContent) {
+      executeWorkflow();
+      setShouldAutoExecute(false);
+      localStorage.removeItem('pendingWorkflow');
+    }
+  }, [shouldAutoExecute, accessToken, workflowContent]);
+
   // 检查用户是否为管理员的逻辑，实际应用中应根据用户认证信息
   useEffect(() => {
     // 这里应该是从localStorage或会话存储中获取用户信息并检查角色
@@ -237,6 +254,15 @@ export default function Practice() {
       });
       setShowResultModal(false);
       setWorkflowResult([]);
+      // 导入成功后刷新题目列表
+      setLoading(true);
+      fetch('/api/exercises')
+        .then(res => res.json())
+        .then(data => {
+          setExercises(data.exercises || []);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
     } catch (e) {
       addToast({
         title: '导入失败',
@@ -341,7 +367,7 @@ export default function Practice() {
                           className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                         >
                           {tag.trim()}
-                        </span>
+                      </span>
                       ))}
                     </div>
                   </td>
@@ -443,8 +469,9 @@ export default function Practice() {
               type="button"
               variant="primary"
               onClick={executeWorkflow}
+              disabled={executing}
             >
-              执行工作流
+              {executing ? '执行中...' : '执行工作流'}
             </Button>
           </div>
         </Modal>

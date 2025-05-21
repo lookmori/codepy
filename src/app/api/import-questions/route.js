@@ -19,7 +19,7 @@ function getUserFromRequest(request) {
 export async function POST(request) {
   // 管理员鉴权
   const user = getUserFromRequest(request);
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== 'ADMIN') {
     return NextResponse.json({ error: 'Forbidden: Only admin can import questions' }, { status: 403 });
   }
   try {
@@ -30,15 +30,16 @@ export async function POST(request) {
     }
 
     // 批量插入题目
+    const cleanQuestions = questions.map(q => ({
+      title: String(q.title || ''),
+      difficulty: String(q.difficulty || ''),
+      example_input: String(q.example_input || ''),
+      example_output: String(q.example_output || ''),
+      problem_description: String(q.problem_description || ''),
+      problem_tag: String(q.problem_tag || ''),
+    }));
     const created = await prisma.exercise.createMany({
-      data: questions.map(q => ({
-        title: q.title,
-        difficulty: q.difficulty,
-        example_input: q.example_input,
-        example_output: q.example_output,
-        problem_description: q.problem_description,
-        problem_tag: q.problem_tag,
-      })),
+      data: cleanQuestions,
       skipDuplicates: true,
     });
 

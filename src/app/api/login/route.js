@@ -53,18 +53,20 @@ export async function POST(request) {
             { expiresIn: '7d' }
           );
     
-          // 返回用户信息和token
-          return NextResponse.json({
+          // 设置 Set-Cookie
+          const response = NextResponse.json({
             user: {
               id: adminUser.id,
               email: adminUser.email,
               name: adminUser.name,
               role: adminUser.role,
               isAdmin: true,
-              isTeacher: false // 管理员不是教师，如果需要可以修改
+              isTeacher: false
             },
             token
           });
+          response.headers.set('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800; SameSite=Lax`);
+          return response;
         }
     
         // 如果不是管理员，继续正常的数据库查询和密码验证
@@ -125,8 +127,8 @@ export async function POST(request) {
         { expiresIn: '7d' }
       );
 
-      // 返回用户信息和token
-      return NextResponse.json({
+      // 设置 Set-Cookie
+      const response = NextResponse.json({
         user: {
           id: user.id,
           email: user.email,
@@ -137,6 +139,8 @@ export async function POST(request) {
         },
         token
       });
+      response.headers.set('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800; SameSite=Lax`);
+      return response;
     } catch (dbError) {
       console.error('数据库查询错误:', dbError);
       return NextResponse.json(

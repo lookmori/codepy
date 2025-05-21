@@ -21,7 +21,7 @@ export async function GET(request, context) {
   const { id } = await context.params;
   try {
     const exercise = await prisma.exercise.findUnique({
-      where: { id: Number(id) }
+      where: { id }
     });
     if (!exercise) {
       return NextResponse.json({ error: '未找到该题目' }, { status: 404 });
@@ -32,7 +32,7 @@ export async function GET(request, context) {
     let student_code = '';
     if (user && user.role === 'STUDENT') {
       const record = await prisma.studentExerciseStatus.findUnique({
-        where: { user_id_exercise_id: { user_id: user.id, exercise_id: Number(id) } }
+        where: { user_id_exercise_id: { user_id: user.id, exercise_id: id } }
       });
       if (record) {
         status = record.status;

@@ -438,15 +438,15 @@ export default function Home() {
             <div className="text-center md:text-right">
               <span className={`text-sm ${darkMode ? "text-blue-400" : "text-blue-600"}`}>
                 {isLoggedIn && user?.name && (
-                  <Typewriter
-                    options={{
+                <Typewriter
+                  options={{
                       strings: [`欢迎回来，${user.name}`],
-                      autoStart: true,
-                      delay: 80,
-                      deleteSpeed: 9999999,
-                      loop: false,
-                    }}
-                  />
+                    autoStart: true,
+                    delay: 80,
+                    deleteSpeed: 9999999,
+                    loop: false,
+                  }}
+                />
                 )}
               </span>
             </div>
