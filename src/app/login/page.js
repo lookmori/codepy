@@ -391,7 +391,7 @@ export default function Login() {
             
             {/* Editor Content */}
             <text x="76" y="105" fontFamily="monospace" fontSize="12" fill="#CE9178">
-              <tspan x="76" dy="0">"Hello, Python!"</tspan>
+              <tspan x="76" dy="0">&quot;Hello, Python!&quot;</tspan>
             </text>
             
             <text x="76" y="135" fontFamily="monospace" fontSize="12" fill="#569CD6">
@@ -442,7 +442,7 @@ export default function Login() {
               <tspan x="96" dy="0">&gt;&gt;&gt; </tspan>
             </text>
             <text x="126" y="340" fontFamily="monospace" fontSize="12" fill="#D4D4D4">
-              <tspan x="126" dy="0">user = User("Student", "Learner")</tspan>
+              <tspan x="126" dy="0">user = User(&quot;Student&quot;, &quot;Learner&quot;)</tspan>
             </text>
             <text x="96" y="370" fontFamily="monospace" fontSize="12" fill="#38BDF8">
               <tspan x="96" dy="0">&gt;&gt;&gt; </tspan>

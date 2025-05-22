@@ -208,7 +208,7 @@ function PracticeContent() {
       const token = localStorage.getItem('coze_access_token');
       if (token) setAccessToken(token);
     }
-  }, []);
+  }, [addToast]);
   
   // 新增：监听 shouldAutoExecute+accessToken+workflowContent，满足条件时自动执行
   useEffect(() => {
@@ -216,8 +216,8 @@ function PracticeContent() {
       executeWorkflow();
       setShouldAutoExecute(false);
       localStorage.removeItem('pendingWorkflow');
-      }
-  }, [shouldAutoExecute, accessToken, workflowContent]);
+    }
+  }, [shouldAutoExecute, accessToken, workflowContent, executeWorkflow]);
 
   // 检查用户是否为管理员的逻辑，实际应用中应根据用户认证信息
   useEffect(() => {

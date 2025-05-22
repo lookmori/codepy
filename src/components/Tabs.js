@@ -22,7 +22,7 @@ const Tabs = ({ children, defaultActiveKey }) => {
     if (!activeKey && tabComponents.length > 0) {
       setActiveKey(tabComponents[0].props.key || tabComponents[0].props.label);
     }
-  }, [activeKey, tabComponents.length]);
+  }, [activeKey, tabComponents.length, tabComponents]);
   
   // 处理标签页点击
   const handleTabClick = (key) => {

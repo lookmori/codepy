@@ -73,7 +73,7 @@ function PracticeDetailContent() {
   };
   useEffect(() => {
     if (id) fetchComments();
-  }, [id]);
+  }, [id, fetchComments]);
 
   const handleSubmit = async () => {
     setSubmitting(true);
