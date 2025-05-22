@@ -48,9 +48,13 @@ export async function POST(request, context) {
       exp: now + 300,
       jti: uuidv4(),
     };
-    // 读取私钥内容
-    const privateKeyPath = path.join(process.cwd(), 'private_key.pem');
-    const privateKey = fs.readFileSync(privateKeyPath);
+    // 从环境变量读取私钥内容
+    const privateKey = COZE_PRIVATE_KEY_JWT;
+
+    if (!privateKey) {
+      return NextResponse.json({ error: '缺少 COZE_PRIVATE_KEY_JWT 环境变量' }, { status: 500 });
+    }
+
     const cozeJwt = jwt.sign(payload, privateKey, {
       algorithm: 'RS256',
       keyid: COZE_PUBLIC_KEY_ID_JWT,
@@ -107,7 +111,6 @@ export async function POST(request, context) {
       code_error: judgeResult.code_error,
       code_status: judgeResult.code_status,
       msg: wfData.msg,
-      debug_url: wfData.debug_url,
     });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

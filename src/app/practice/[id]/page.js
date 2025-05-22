@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import MonacoEditor, { loader } from '@monaco-editor/react';
 import Button from '@/components/Button';
@@ -52,14 +52,14 @@ function PracticeDetailContent() {
     fetchWithThrow(`/api/exercises/${id}`)
       .then(data => {
         setExercise(data.exercise);
-        setCode(data.exercise?.starter_code || '');
+        setCode(data.exercise?.student_code || data.exercise?.starter_code || '');
         setLoading(false);
       })
       .catch(err => { throw err; });
   }, [id]);
 
   // 拉取评论
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     setCommentsLoading(true);
     try {
       const res = await fetch(`/api/exercises/${id}/comments`);
@@ -70,7 +70,7 @@ function PracticeDetailContent() {
     } finally {
       setCommentsLoading(false);
     }
-  };
+  }, [id]);
   useEffect(() => {
     if (id) fetchComments();
   }, [id, fetchComments]);

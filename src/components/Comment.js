@@ -72,9 +72,7 @@ export default function CommentSection({ questionId, currentUser, comments = [],
   const handleReplyClick = (comment) => {
     if (readOnly) return; // Do nothing if readOnly
     setReplyTo(comment);
-    // Format original comment content as a Markdown quote
-    const quotedContent = comment.content.split('\n').map(line => `> ${line}`).join('\n');
-    setContent(`${quotedContent}\n\n`); // Add space after the quote
+    setContent('');
 
     // Scroll to the comment form
     const commentForm = document.getElementById('comment-form');
