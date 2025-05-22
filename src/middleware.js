@@ -24,6 +24,11 @@ export function middleware(request) {
     return NextResponse.redirect(url);
   }
   
+  // 如果路径是 /admin/personnel 且用户是教师，则允许访问
+  if (path === '/admin/personnel' && userRole === 'TEACHER') {
+    return NextResponse.next();
+  }
+  
   // 如果是管理员专用路径，但用户不是管理员，则重定向到首页
   if (isAdminPath && userRole !== 'ADMIN') {
     return NextResponse.redirect(new URL('/', request.url));

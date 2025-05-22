@@ -130,12 +130,12 @@ export async function POST(request) {
       // 设置 Set-Cookie
       const response = NextResponse.json({
         user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          isAdmin: user.role === 'ADMIN',
-          isTeacher: user.role === 'TEACHER'
+          id: userData.id,
+          email: userData.email,
+          name: userData.name,
+          role: userData.role,
+          isAdmin: userData.isAdmin,
+          isTeacher: userData.isTeacher
         },
         token
       });

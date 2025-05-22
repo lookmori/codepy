@@ -193,26 +193,14 @@ function PersonnelPageContent() {
     }
 
     try {
-      const data = await fetchWithThrow('/api/admin/users/create', {
+      // 尝试创建用户
+      await fetchWithThrow('/api/admin/users/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...addFormData, role: userRoleToAdd }),
       });
 
-      if (!data.ok) {
-        // Handle backend validation errors or other errors
-        if (data.validationErrors) {
-          setAddFormErrors(data.validationErrors);
-        } else {
-          addToast({
-            title: '添加失败',
-            message: data.error || '创建用户失败',
-            type: 'danger',
-          });
-        }
-        throw new Error(data.error || '创建用户失败'); // Propagate error to catch block
-      }
-
+      // 如果 fetchWithThrow 没有抛出错误，则表示成功
       addToast({
         title: '添加成功',
         message: `${userRoleToAdd === 'STUDENT' ? '学生' : '教师'} ${addFormData.username} 已成功添加！`,
@@ -228,9 +216,30 @@ function PersonnelPageContent() {
         setTeacherRefreshKey(k => k + 1); // 强制刷新
       }
     } catch (err) {
-      // Error already handled by addToast for non-validation errors
+      // 如果 fetchWithThrow 抛出错误，则表示失败
       console.error('创建用户错误:', err);
-      throw err;
+
+      // 尝试从错误对象中获取后端返回的验证错误
+      let errorMessage = '创建用户失败';
+      let backendErrors = {};
+
+      // 假设后端在验证失败时，错误对象上会有一个 validationErrors 属性
+      if (err.validationErrors) {
+          backendErrors = err.validationErrors;
+          setAddFormErrors(backendErrors);
+          errorMessage = '创建用户失败，请检查输入。'; // 或者更具体的错误信息
+      } else if (err.message) {
+          // 假设后端返回的错误信息在 error.message 中
+          errorMessage = `创建失败: ${err.message}`; 
+      } 
+      
+      // 显示失败 Toast
+      addToast({
+          title: '添加失败',
+          message: errorMessage,
+          type: 'danger',
+      });
+
     } finally {
       setIsAdding(false);
     }
