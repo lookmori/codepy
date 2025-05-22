@@ -27,49 +27,6 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-        // 从环境变量获取管理员账号信息
-        const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-        const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-    
-        // 检查是否是管理员登录
-        if (ADMIN_EMAIL && ADMIN_PASSWORD && email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-          console.log('检测到管理员登录，跳过数据库验证');
-          const adminUser = {
-            id: 'admin-id', // 可以使用一个固定的ID或者生成一个
-            email: ADMIN_EMAIL,
-            name: process.env.ADMIN_NAME || '管理员',
-            role: 'ADMIN',
-            // 其他管理员可能需要的字段...
-          };
-    
-          // 生成 JWT token
-          const token = jwt.sign(
-            {
-              id: adminUser.id,
-              email: adminUser.email,
-              role: adminUser.role
-            },
-            JWT_SECRET,
-            { expiresIn: '7d' }
-          );
-    
-          // 设置 Set-Cookie
-          const response = NextResponse.json({
-            user: {
-              id: adminUser.id,
-              email: adminUser.email,
-              name: adminUser.name,
-              role: adminUser.role,
-              isAdmin: true,
-              isTeacher: false
-            },
-            token
-          });
-          response.headers.set('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800; SameSite=Lax`);
-          return response;
-        }
-    
-        // 如果不是管理员，继续正常的数据库查询和密码验证
 
     try {
       console.log('开始查询用户:', email);

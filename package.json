@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
     "prisma:migrate": "prisma migrate dev",
-    "postinstall": "node scripts/copy-monaco.js"
+    "postinstall": "node scripts/copy-monaco.js && prisma generate",
+    "db:seed": "npx prisma db seed"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
@@ -49,5 +50,8 @@
     "@eslint/eslintrc": "^3",
     "eslint": "^9",
     "eslint-config-next": "15.3.2"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
