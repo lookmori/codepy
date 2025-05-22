@@ -1,0 +1,344 @@
+---
+title: 输入输出
+---
+
+# Python 输入输出知识点详解
+
+## 1. 输出函数
+
+### 1.1 print() 函数
+
+在 Python 中，`print()` 函数是最常用的输出函数，用于将对象打印到标准输出设备（通常是控制台）。
+
+<Alert variant="info">
+根据 Python 官方文档（https://docs.python.org/3/library/functions.html#print）：
+> "print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)"
+> 
+> 将 objects 打印到 file 指定的文本流，以 sep 分隔并在末尾加上 end。
+</Alert>
+
+下面是 `print()` 函数的基本用法：
+
+<CodeBlock language="python">
+{`# 打印单个对象
+print("Hello, World!")  # 输出: Hello, World!
+
+# 打印多个对象，默认用空格分隔
+print("Hello", "World", "!")  # 输出: Hello World !
+
+# 使用 sep 参数改变分隔符
+print("Hello", "World", "!", sep="-")  # 输出: Hello-World-!
+
+# 使用 end 参数改变结束符
+print("Hello", end=" ")
+print("World!")  # 输出: Hello World!
+
+# 打印变量
+name = "Python"
+version = 3.9
+print("I am using", name, "version", version)  # 输出: I am using Python version 3.9`}
+</CodeBlock>
+
+### 1.2 格式化输出
+
+Python 提供了多种格式化输出的方式，让输出更加美观和易读。
+
+<Tabs>
+<Tab label="旧式格式化 (%)">
+
+Python 2.x 时代就有的格式化方式，使用 `%` 操作符。
+
+<CodeBlock language="python">
+{`# 字符串格式化
+name = "Alice"
+age = 25
+print("My name is %s and I am %d years old." % (name, age))  # 输出: My name is Alice and I am 25 years old.
+
+# 浮点数格式化
+pi = 3.1415926
+print("Pi is approximately %.2f" % pi)  # 输出: Pi is approximately 3.14
+
+# 混合格式化
+print("There are %d %s in the %s." % (3, "apples", "basket"))  # 输出: There are 3 apples in the basket.`}
+</CodeBlock>
+
+</Tab>
+<Tab label="format() 方法">
+
+Python 3 引入的更灵活的格式化方法。
+
+<CodeBlock language="python">
+{`# 基本用法
+name = "Bob"
+age = 30
+print("My name is {} and I am {} years old.".format(name, age))  # 输出: My name is Bob and I am 30 years old.
+
+# 通过位置参数
+print("I like {1} and {0}.".format("apples", "bananas"))  # 输出: I like bananas and apples.
+
+# 通过关键字参数
+print("My name is {name} and I am {age} years old.".format(name="Charlie", age=35))  # 输出: My name is Charlie and I am 35 years old.
+
+# 格式化数字
+pi = 3.1415926
+print("Pi is approximately {0:.2f}".format(pi))  # 输出: Pi is approximately 3.14
+
+# 对齐
+print("{:<10}".format("left"))  # 左对齐，宽度为10
+print("{:>10}".format("right"))  # 右对齐，宽度为10
+print("{:^10}".format("center"))  # 居中对齐，宽度为10`}
+</CodeBlock>
+
+</Tab>
+<Tab label="f-string (格式化字符串字面值)">
+
+Python 3.6 引入的最新格式化方式，更加简洁和高效。
+
+<CodeBlock language="python">
+{`# 基本用法
+name = "David"
+age = 40
+print(f"My name is {name} and I am {age} years old.")  # 输出: My name is David and I am 40 years old.
+
+# 表达式计算
+x = 10
+y = 20
+print(f"The sum of {x} and {y} is {x + y}.")  # 输出: The sum of 10 and 20 is 30.
+
+# 格式化数字
+pi = 3.1415926
+print(f"Pi is approximately {pi:.2f}")  # 输出: Pi is approximately 3.14
+
+# 调用函数
+name = "Eve"
+print(f"Hello, {name.upper()}!")  # 输出: Hello, EVE!
+
+# 对齐
+text = "hello"
+print(f"{text:<10}")  # 左对齐，宽度为10
+print(f"{text:>10}")  # 右对齐，宽度为10
+print(f"{text:^10}")  # 居中对齐，宽度为10`}
+</CodeBlock>
+
+</Tab>
+</Tabs>
+
+## 2. 输入函数
+
+### 2.1 input() 函数
+
+`input()` 函数用于从标准输入设备（通常是键盘）读取用户输入的数据。
+
+<Alert variant="info">
+根据 Python 官方文档（https://docs.python.org/3/library/functions.html#input）：
+> "input([prompt])"
+> 
+> 如果存在 prompt 参数，则将其写入标准输出，末尾不带换行符。然后从输入中读取一行，转换为字符串（去除末尾的换行符）并返回。
+</Alert>
+
+下面是 `input()` 函数的基本用法：
+
+<CodeBlock language="python">
+{`# 简单输入
+name = input("请输入你的名字: ")
+print(f"你好, {name}!")
+
+# 输入并转换为整数
+age = int(input("请输入你的年龄: "))
+print(f"你明年将是 {age + 1} 岁。")
+
+# 输入多个值
+x, y = input("请输入两个数字，用空格分隔: ").split()
+x = int(x)
+y = int(y)
+print(f"它们的和是 {x + y}。")`}
+</CodeBlock>
+
+### 2.2 输入验证
+
+在实际应用中，我们通常需要验证用户输入的有效性。
+
+<CodeBlock language="python">
+{`# 验证输入是否为数字
+while True:
+    try:
+        age = int(input("请输入你的年龄: "))
+        if age < 0:
+            print("年龄不能为负数，请重新输入。")
+            continue
+        break
+    except ValueError:
+        print("请输入有效的数字。")
+
+print(f"你输入的年龄是 {age} 岁。")
+
+# 验证输入是否在有效范围内
+while True:
+    grade = input("请输入你的成绩 (A/B/C/D/F): ").upper()
+    if grade in ['A', 'B', 'C', 'D', 'F']:
+        break
+    print("无效的成绩，请重新输入。")
+
+print(f"你的成绩是 {grade}。")`}
+</CodeBlock>
+
+## 3. 文件输入输出
+
+### 3.1 文件写入
+
+Python 提供了 `open()` 函数用于打开文件，并进行读写操作。
+
+<CodeBlock language="python">
+{`# 写入文件
+with open("example.txt", "w") as file:
+    file.write("Hello, World!\n")
+    file.write("This is a test file.\n")
+
+# 追加写入
+with open("example.txt", "a") as file:
+    file.write("This line is appended.\n")
+
+# 写入多行
+lines = ["Line 1\n", "Line 2\n", "Line 3\n"]
+with open("example.txt", "w") as file:
+    file.writelines(lines)
+
+print("文件写入完成。")`}
+</CodeBlock>
+
+### 3.2 文件读取
+
+<CodeBlock language="python">
+{`# 读取整个文件
+with open("example.txt", "r") as file:
+    content = file.read()
+    print(content)
+
+# 逐行读取
+with open("example.txt", "r") as file:
+    for line in file:
+        print(line.strip())  # 去除行尾的换行符
+
+# 读取所有行到列表
+with open("example.txt", "r") as file:
+    lines = file.readlines()
+    print(lines)
+
+print("文件读取完成。")`}
+</CodeBlock>
+
+## 4. 标准输入输出重定向
+
+在 Python 中，我们可以重定向标准输入输出流。
+
+<CodeBlock language="python">
+{`import sys
+
+# 将标准输出重定向到文件
+original_stdout = sys.stdout
+with open("output.txt", "w") as f:
+    sys.stdout = f  # 重定向标准输出
+    print("这行文字将被写入文件而不是显示在控制台。")
+    sys.stdout = original_stdout  # 恢复标准输出
+
+print("现在输出恢复到控制台。")
+
+# 从文件读取作为标准输入
+original_stdin = sys.stdin
+with open("input.txt", "r") as f:
+    sys.stdin = f  # 重定向标准输入
+    name = input()  # 从文件读取一行
+    sys.stdin = original_stdin  # 恢复标准输入
+
+print(f"从文件读取的名字是: {name}")`}
+</CodeBlock>
+
+## 5. 高级格式化输出
+
+### 5.1 字符串模板
+
+<CodeBlock language="python">
+{`from string import Template
+
+# 创建模板
+template = Template("Hello, $name! You are $age years old.")
+
+# 替换变量
+name = "Frank"
+age = 50
+message = template.substitute(name=name, age=age)
+print(message)  # 输出: Hello, Frank! You are 50 years old.
+
+# 使用字典替换
+data = {"name": "Grace", "age": 55}
+message = template.substitute(data)
+print(message)  # 输出: Hello, Grace! You are 55 years old.`}
+</CodeBlock>
+
+### 5.2 JSON 格式化
+
+<CodeBlock language="python">
+{`import json
+
+# 创建字典
+person = {
+    "name": "Hank",
+    "age": 60,
+    "city": "New York",
+    "hobbies": ["reading", "swimming", "traveling"]
+}
+
+# 格式化为 JSON 字符串
+json_str = json.dumps(person, indent=4)
+print(json_str)
+
+# 写入 JSON 文件
+with open("person.json", "w") as file:
+    json.dump(person, file, indent=4)
+
+# 从 JSON 文件读取
+with open("person.json", "r") as file:
+    data = json.load(file)
+    print(data["name"])  # 输出: Hank`}
+</CodeBlock>
+
+## 6. 格式化数字
+
+### 6.1 数字格式化选项
+
+<CodeBlock language="python">
+{`# 浮点数精度
+pi = 3.141592653589793
+print(f"Pi: {pi:.2f}")  # 输出: Pi: 3.14
+print(f"Pi: {pi:.5f}")  # 输出: Pi: 3.14159
+
+# 千位分隔符
+number = 1234567.89
+print(f"Number: {number:,}")  # 输出: Number: 1,234,567.89
+print(f"Number: {number:,.2f}")  # 输出: Number: 1,234,567.89
+
+# 百分比
+percent = 0.75
+print(f"Percent: {percent:.1%}")  # 输出: Percent: 75.0%
+
+# 科学计数法
+large_number = 1234567890
+print(f"Large number: {large_number:e}")  # 输出: Large number: 1.234568e+09
+print(f"Large number: {large_number:.2e}")  # 输出: Large number: 1.23e+09`}
+</CodeBlock>
+
+## 7. 总结
+
+Python 提供了丰富的输入输出功能：
+
+- **输出函数**：`print()` 是最常用的输出函数，可以通过多种方式格式化输出
+- **输入函数**：`input()` 用于从标准输入读取用户输入
+- **格式化方法**：旧式格式化 (%)、format() 方法和 f-string (格式化字符串字面值)
+- **文件操作**：使用 `open()` 函数读写文件
+- **高级格式化**：字符串模板、JSON 格式化等
+
+在实际应用中，应根据场景选择合适的输入输出方式，特别是格式化输出，选择简洁高效的方法可以提高代码可读性和可维护性。
+
+
+
+

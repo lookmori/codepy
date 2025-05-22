@@ -2,18 +2,346 @@
 title: Python 变量简介
 ---
 
-# Python 变量
+# Python 变量知识点详解
 
-变量用于存储数据。你可以用等号 `=` 给变量赋值：
+## 1. 变量的基本概念
 
-```python
-x = 5
-y = "Hello"
-```
+### 1.1 什么是变量？
 
-变量名可以是字母、数字和下划线的组合，但不能以数字开头。
+在Python中，变量是存储数据的容器。它们是内存中的命名位置，用于存储值。Python是动态类型语言，这意味着你不需要声明变量的类型，解释器会根据赋值自动确定变量的类型。
 
-- 有意义的变量名有助于代码可读性。
-- Python 是动态类型语言，变量类型可以随时改变。
+<Alert variant="info">
+根据Python官方文档（https://docs.python.org/3/reference/executionmodel.html）：
+> "变量是对对象的引用。赋值语句创建对象的新引用。"
 
-> 试着在交互式解释器里定义几个变量吧！
+</Alert>
+
+### 1.2 变量的命名规则
+
+- 变量名必须以字母或下划线(_)开头
+- 变量名可以包含字母、数字和下划线
+- 变量名区分大小写（age、Age和AGE是不同的变量）
+- 变量名不能是Python的关键字（如if、else、for等）
+
+### 1.3 变量赋值
+
+Python使用等号(=)进行变量赋值，格式为：`变量名 = 值`
+
+下面是一些变量赋值的例子：
+
+<CodeBlock language="python">
+{`# 赋值整数
+age = 25
+
+# 赋值浮点数
+height = 1.75
+
+# 赋值字符串
+name = "张三"
+
+# 赋值布尔值
+is_student = True
+
+# 打印变量
+print(age)      # 输出: 25
+print(height)   # 输出: 1.75
+print(name)     # 输出: 张三
+print(is_student) # 输出: True`}
+</CodeBlock>
+
+## 2. 变量类型
+
+Python有多种内置数据类型，变量可以引用这些不同类型的对象：
+
+<Tabs>
+<Tab label="数字类型">
+
+<CodeBlock language="python">
+{`# 整数
+x = 10
+
+# 浮点数
+y = 3.14
+
+# 复数
+z = 2 + 3j
+
+print(type(x))  # 输出: <class 'int'>
+print(type(y))  # 输出: <class 'float'>
+print(type(z))  # 输出: <class 'complex'>`}
+</CodeBlock>
+
+</Tab>
+<Tab label="字符串类型">
+
+<CodeBlock language="python">
+{`# 单引号字符串
+str1 = 'Hello World'
+
+# 双引号字符串
+str2 = "Python Programming"
+
+# 三引号字符串（可以跨多行）
+str3 = '''这是一个
+多行字符串
+示例'''
+
+print(str1)
+print(str2)
+print(str3)`}
+</CodeBlock>
+
+</Tab>
+<Tab label="布尔类型">
+
+<CodeBlock language="python">
+{`is_valid = True
+is_active = False
+
+print(type(is_valid))  # 输出: <class 'bool'>`}
+</CodeBlock>
+
+</Tab>
+<Tab label="序列类型">
+
+<CodeBlock language="python">
+{`# 列表（可变序列）
+my_list = [1, 2, 3, "apple", "banana"]
+
+# 元组（不可变序列）
+my_tuple = (10, 20, "hello")
+
+# 范围（不可变序列）
+my_range = range(5)  # 生成0到4的整数序列
+
+print(my_list)
+print(my_tuple)
+print(list(my_range))  # 转换为列表以便打印`}
+</CodeBlock>
+
+</Tab>
+<Tab label="集合类型">
+
+<CodeBlock language="python">
+{`# 集合（无序且唯一）
+my_set = {1, 2, 3, 3, 4}  # 注意：重复的3只会保留一个
+
+# 冻结集合（不可变集合）
+my_frozenset = frozenset({1, 2, 3})
+
+print(my_set)  # 输出: {1, 2, 3, 4}
+print(my_frozenset)`}
+</CodeBlock>
+
+</Tab>
+<Tab label="映射类型">
+
+<CodeBlock language="python">
+{`# 字典（键值对）
+my_dict = {
+    "name": "张三",
+    "age": 25,
+    "city": "北京"
+}
+
+print(my_dict["name"])  # 输出: 张三`}
+</CodeBlock>
+
+</Tab>
+</Tabs>
+
+## 3. 变量的动态类型特性
+
+Python是动态类型语言，这意味着同一个变量可以在不同时间引用不同类型的对象。
+
+<CodeBlock language="python">
+{`# 初始赋值为整数
+x = 10
+print(type(x))  # 输出: <class 'int'>
+
+# 重新赋值为字符串
+x = "Hello"
+print(type(x))  # 输出: <class 'str'>
+
+# 重新赋值为列表
+x = [1, 2, 3]
+print(type(x))  # 输出: <class 'list'>`}
+</CodeBlock>
+
+## 4. 变量的内存引用
+
+在Python中，变量是对对象的引用。当你赋值时，实际上是创建了一个指向对象的引用。
+
+<CodeBlock language="python">
+{`# 创建一个列表对象
+a = [1, 2, 3]
+
+# b引用同一个列表对象
+b = a
+
+# 修改b会影响a，因为它们引用同一个对象
+b.append(4)
+
+print(a)  # 输出: [1, 2, 3, 4]
+print(b)  # 输出: [1, 2, 3, 4]`}
+</CodeBlock>
+
+如果你想创建对象的副本而不是引用，可以使用复制方法：
+
+<CodeBlock language="python">
+{`# 创建一个列表对象
+a = [1, 2, 3]
+
+# 创建a的副本
+b = a.copy()  # 或者使用 b = a[:]
+
+# 修改b不会影响a
+b.append(4)
+
+print(a)  # 输出: [1, 2, 3]
+print(b)  # 输出: [1, 2, 3, 4]`}
+</CodeBlock>
+
+## 5. 变量的作用域
+
+变量的作用域决定了在哪里可以访问变量。Python有四种作用域：
+
+<Tabs>
+<Tab label="局部作用域">
+
+<CodeBlock language="python">
+{`def my_function():
+    x = 10  # 局部变量
+    print(x)  # 可以在函数内部访问
+
+my_function()
+# print(x)  # 错误：无法在函数外部访问局部变量`}
+</CodeBlock>
+
+</Tab>
+<Tab label="嵌套作用域">
+
+<CodeBlock language="python">
+{`def outer_function():
+    x = 10  # 外层函数的局部变量
+    
+    def inner_function():
+        print(x)  # 可以访问外层函数的变量
+    
+    inner_function()
+
+outer_function()`}
+</CodeBlock>
+
+</Tab>
+<Tab label="全局作用域">
+
+<CodeBlock language="python">
+{`x = 10  # 全局变量
+
+def my_function():
+    print(x)  # 可以访问全局变量
+
+my_function()
+print(x)  # 也可以直接访问`}
+</CodeBlock>
+
+</Tab>
+<Tab label="内置作用域">
+
+<CodeBlock language="python">
+{`# len()是Python内置函数
+my_list = [1, 2, 3]
+print(len(my_list))  # 可以在任何地方调用内置函数`}
+</CodeBlock>
+
+</Tab>
+<Tab label="global关键字">
+
+<CodeBlock language="python">
+{`x = 10  # 全局变量
+
+def modify_global():
+    global x  # 声明使用全局变量x
+    x = 20    # 修改全局变量
+    
+modify_global()
+print(x)  # 输出: 20`}
+</CodeBlock>
+
+</Tab>
+</Tabs>
+
+## 6. 变量的删除
+
+可以使用`del`语句删除变量引用：
+
+<CodeBlock language="python">
+{`x = 10
+print(x)  # 输出: 10
+
+del x
+# print(x)  # 错误：变量x已被删除`}
+</CodeBlock>
+
+## 7. 多重赋值
+
+Python允许同时为多个变量赋值：
+
+<CodeBlock language="python">
+{`# 同时为多个变量赋值
+a, b, c = 1, 2, 3
+print(a, b, c)  # 输出: 1 2 3
+
+# 交换变量值
+x = 10
+y = 20
+x, y = y, x
+print(x, y)  # 输出: 20 10`}
+</CodeBlock>
+
+## 8. 变量解包
+
+可以将序列（如列表、元组）解包到变量中：
+
+<CodeBlock language="python">
+{`# 解包列表
+my_list = [1, 2, 3]
+a, b, c = my_list
+print(a, b, c)  # 输出: 1 2 3
+
+# 解包元组
+my_tuple = (4, 5, 6)
+d, e, f = my_tuple
+print(d, e, f)  # 输出: 4 5 6`}
+</CodeBlock>
+
+## 9. 变量命名约定
+
+Python社区遵循以下命名约定：
+
+<CodeBlock language="python">
+{`# 变量和函数名
+my_variable = 10
+
+def calculate_sum(a, b):
+    return a + b
+
+# 类名
+class MyClass:
+    pass
+
+# 常量
+MAX_VALUE = 100`}
+</CodeBlock>
+
+## 10. 总结
+
+Python变量是存储数据的容器，具有以下特点：
+
+- 动态类型：变量可以引用不同类型的对象
+- 引用语义：变量是对对象的引用
+- 多种作用域：局部、嵌套、全局和内置
+- 丰富的数据类型：数字、字符串、布尔值、序列、集合和映射
+
+通过理解这些概念，你可以更好地使用Python进行编程。

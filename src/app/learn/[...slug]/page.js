@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote-client/rsc';
+import { mdxComponents } from '@/components/mdxComponents';
 
 const MDX_BASE_DIRECTORY = path.join(process.cwd(), 'mdx');
 const ITEMS_PER_PAGE = 10; // Define how many items per page
@@ -217,6 +218,7 @@ export default async function CollectionPage({ params, searchParams }) {
               parseFrontmatter: true,
               // Add remark and rehype plugins here if needed
             }}
+            components={mdxComponents}
            />
         </div>
       </div>

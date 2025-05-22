@@ -25,7 +25,7 @@ export function middleware(request) {
   }
   
   // 如果是管理员专用路径，但用户不是管理员，则重定向到首页
-  if (isAdminPath && userRole !== 'admin') {
+  if (isAdminPath && userRole !== 'ADMIN') {
     return NextResponse.redirect(new URL('/', request.url));
   }
   

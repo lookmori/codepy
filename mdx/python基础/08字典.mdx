@@ -1,0 +1,528 @@
+---
+title: 字典
+---
+
+
+
+# Python 字典知识点详解
+
+## 1. 字典基础
+
+### 1.1 什么是字典？
+
+字典是 Python 中一种无序的、可变的、键值对数据结构。字典通过键（key）而不是索引来访问元素。
+
+<Alert variant="info">
+根据 Python 官方文档（https://docs.python.org/3/tutorial/datastructures.html#dictionaries）：
+> "字典是 Python 内置的数据类型，也称为关联数组或哈希表。字典中的键必须是不可变的类型，如字符串、数字或元组。"
+</Alert>
+
+下面是创建和访问字典的基本示例：
+
+<CodeBlock language="python">
+{`# 创建字典
+person = {"name": "John", "age": 30, "city": "New York"}
+empty_dict = {}  # 空字典
+
+# 使用 dict() 构造函数
+person2 = dict(name="Mary", age=25, city="Los Angeles")
+
+# 使用键值对列表
+person3 = dict([("name", "Bob"), ("age", 35), ("city", "Chicago")])
+
+# 访问字典元素
+print(person["name"])  # 输出: John
+print(person2.get("age"))  # 输出: 25
+
+# 修改字典元素
+person["age"] = 31
+print(person)  # 输出: {'name': 'John', 'age': 31, 'city': 'New York'}
+
+# 添加新元素
+person["job"] = "Engineer"
+print(person)  # 输出: {'name': 'John', 'age': 31, 'city': 'New York', 'job': 'Engineer'}
+
+# 删除元素
+del person["city"]
+print(person)  # 输出: {'name': 'John', 'age': 31, 'job': 'Engineer'}`}
+</CodeBlock>
+
+### 1.2 字典的键和值
+
+<CodeBlock language="python">
+{`# 键必须是不可变的
+valid_dict = {
+    "name": "John",
+    123: "number key",
+    (1, 2): "tuple key"
+}
+
+# 无效的键（列表是可变的）
+# invalid_dict = {[1, 2]: "list key"}  # 这会引发 TypeError
+
+# 值可以是任何类型
+mixed_dict = {
+    "name": "John",
+    "age": 30,
+    "hobbies": ["reading", "swimming"],
+    "address": {"city": "New York", "zip": "10001"}
+}
+
+# 访问嵌套字典
+print(mixed_dict["address"]["city"])  # 输出: New York
+
+# 检查键是否存在
+print("name" in mixed_dict)  # 输出: True
+print("job" in mixed_dict)  # 输出: False`}
+</CodeBlock>
+
+## 2. 字典操作
+
+### 2.1 访问字典元素
+
+<CodeBlock language="python">
+{`# 使用方括号访问
+person = {"name": "John", "age": 30}
+print(person["name"])  # 输出: John
+
+# 如果键不存在，会引发 KeyError
+# print(person["job"])  # 这会引发 KeyError
+
+# 使用 get() 方法
+print(person.get("age"))  # 输出: 30
+print(person.get("job"))  # 输出: None (默认)
+print(person.get("job", "Unemployed"))  # 输出: Unemployed (自定义默认值)
+
+# 获取所有键
+keys = person.keys()
+print(keys)  # 输出: dict_keys(['name', 'age'])
+
+# 获取所有值
+values = person.values()
+print(values)  # 输出: dict_values(['John', 30])
+
+# 获取所有键值对
+items = person.items()
+print(items)  # 输出: dict_items([('name', 'John'), ('age', 30)])`}
+</CodeBlock>
+
+### 2.2 修改和更新字典
+
+<CodeBlock language="python">
+{`# 修改现有元素
+person = {"name": "John", "age": 30}
+person["age"] = 31
+print(person)  # 输出: {'name': 'John', 'age': 31}
+
+# 添加新元素
+person["city"] = "New York"
+print(person)  # 输出: {'name': 'John', 'age': 31, 'city': 'New York'}
+
+# 使用 update() 方法合并字典
+person2 = {"job": "Engineer", "age": 32}  # age 会被更新
+person.update(person2)
+print(person)  # 输出: {'name': 'John', 'age': 32, 'city': 'New York', 'job': 'Engineer'}
+
+# 使用字典推导式创建新字典
+squares = {x: x**2 for x in range(5)}
+print(squares)  # 输出: {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+
+# 从列表创建字典
+keys = ["name", "age", "city"]
+values = ["John", 30, "New York"]
+person3 = dict(zip(keys, values))
+print(person3)  # 输出: {'name': 'John', 'age': 30, 'city': 'New York'}`}
+</CodeBlock>
+
+### 2.3 删除字典元素
+
+<CodeBlock language="python">
+{`# 使用 del 删除指定键
+person = {"name": "John", "age": 30, "city": "New York"}
+del person["city"]
+print(person)  # 输出: {'name': 'John', 'age': 30}
+
+# 使用 pop() 删除并返回指定键的值
+age = person.pop("age")
+print(age)  # 输出: 30
+print(person)  # 输出: {'name': 'John'}
+
+# 使用 popitem() 删除并返回最后插入的键值对
+person = {"name": "John", "age": 30, "city": "New York"}
+item = person.popitem()
+print(item)  # 输出: ('city', 'New York') (Python 3.7+ 保证是最后插入的)
+print(person)  # 输出: {'name': 'John', 'age': 30}
+
+# 使用 clear() 清空字典
+person.clear()
+print(person)  # 输出: {}`}
+</CodeBlock>
+
+## 3. 字典方法
+
+### 3.1 常用方法
+
+<CodeBlock language="python">
+{`# copy() - 复制字典
+original = {"name": "John", "age": 30}
+copy = original.copy()
+print(copy)  # 输出: {'name': 'John', 'age': 30}
+
+# fromkeys() - 使用指定键创建新字典
+keys = ["name", "age", "city"]
+new_dict = dict.fromkeys(keys, "unknown")
+print(new_dict)  # 输出: {'name': 'unknown', 'age': 'unknown', 'city': 'unknown'}
+
+# setdefault() - 获取指定键的值，如果不存在则设置默认值
+person = {"name": "John"}
+age = person.setdefault("age", 30)
+print(age)  # 输出: 30
+print(person)  # 输出: {'name': 'John', 'age': 30}
+
+# 如果键已存在，setdefault() 不会修改值
+name = person.setdefault("name", "Mary")
+print(name)  # 输出: John
+print(person)  # 输出: {'name': 'John', 'age': 30}`}
+</CodeBlock>
+
+### 3.2 字典视图对象
+
+<CodeBlock language="python">
+{`# 字典视图对象是动态的
+person = {"name": "John", "age": 30}
+keys = person.keys()
+values = person.values()
+items = person.items()
+
+print(keys)    # 输出: dict_keys(['name', 'age'])
+print(values)  # 输出: dict_values(['John', 30])
+print(items)   # 输出: dict_items([('name', 'John'), ('age', 30)])
+
+# 添加新元素后，视图对象会自动更新
+person["city"] = "New York"
+print(keys)    # 输出: dict_keys(['name', 'age', 'city'])
+print(values)  # 输出: dict_values(['John', 30, 'New York'])
+print(items)   # 输出: dict_items([('name', 'John'), ('age', 30), ('city', 'New York')])
+
+# 转换为列表
+keys_list = list(keys)
+values_list = list(values)
+items_list = list(items)
+
+print(keys_list)    # 输出: ['name', 'age', 'city']
+print(values_list)  # 输出: ['John', 30, 'New York']
+print(items_list)   # 输出: [('name', 'John'), ('age', 30), ('city', 'New York')]`}
+</CodeBlock>
+
+## 4. 字典与循环
+
+### 4.1 遍历字典
+
+<CodeBlock language="python">
+{`# 遍历键
+person = {"name": "John", "age": 30, "city": "New York"}
+for key in person:  # 等同于 for key in person.keys():
+    print(key)  # 依次输出: name, age, city
+
+# 遍历值
+for value in person.values():
+    print(value)  # 依次输出: John, 30, New York
+
+# 遍历键值对
+for key, value in person.items():
+    print(f"{key}: {value}")  # 依次输出: name: John, age: 30, city: New York
+
+# 遍历并修改字典（需要创建副本）
+# 错误方式（会引发 RuntimeError）
+# for key in person:
+#     if key == "age":
+#         person.pop(key)
+
+# 正确方式
+for key in list(person.keys()):
+    if key == "age":
+        person.pop(key)
+print(person)  # 输出: {'name': 'John', 'city': 'New York'}`}
+</CodeBlock>
+
+### 4.2 字典推导式
+
+字典推导式是创建字典的简洁方式。
+
+<CodeBlock language="python">
+{`# 基本字典推导式
+squares = {x: x**2 for x in range(5)}
+print(squares)  # 输出: {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
+
+# 带条件的字典推导式
+even_squares = {x: x**2 for x in range(10) if x % 2 == 0}
+print(even_squares)  # 输出: {0: 0, 2: 4, 4: 16, 6: 36, 8: 64}
+
+# 交换键值
+person = {"name": "John", "age": 30}
+flipped = {value: key for key, value in person.items()}
+print(flipped)  # 输出: {'John': 'name', 30: 'age'}
+
+# 从两个列表创建字典
+keys = ["name", "age", "city"]
+values = ["John", 30, "New York"]
+person_dict = {k: v for k, v in zip(keys, values)}
+print(person_dict)  # 输出: {'name': 'John', 'age': 30, 'city': 'New York'}`}
+</CodeBlock>
+
+## 5. 字典的高级应用
+
+### 5.1 嵌套字典
+
+<CodeBlock language="python">
+{`# 创建嵌套字典
+students = {
+    "John": {"age": 20, "major": "Computer Science", "grades": {"math": 90, "english": 85}},
+    "Mary": {"age": 21, "major": "Mathematics", "grades": {"math": 95, "physics": 92}},
+    "Bob": {"age": 19, "major": "Physics", "grades": {"physics": 88, "chemistry": 90}}
+}
+
+# 访问嵌套字典
+print(students["John"]["age"])  # 输出: 20
+print(students["Mary"]["grades"]["math"])  # 输出: 95
+
+# 修改嵌套字典
+students["Bob"]["grades"]["chemistry"] = 95
+print(students["Bob"]["grades"])  # 输出: {'physics': 88, 'chemistry': 95}
+
+# 添加新学生
+students["Alice"] = {"age": 22, "major": "Biology", "grades": {"biology": 93, "chemistry": 87}}
+print(students["Alice"])  # 输出: {'age': 22, 'major': 'Biology', 'grades': {'biology': 93, 'chemistry': 87}}
+
+# 遍历嵌套字典
+for name, info in students.items():
+    print(f"学生: {name}")
+    for key, value in info.items():
+        if key == "grades":
+            print(f"  {key}:")
+            for subject, grade in value.items():
+                print(f"    {subject}: {grade}")
+        else:
+            print(f"  {key}: {value}")`}
+</CodeBlock>
+
+### 5.2 字典与函数
+
+<CodeBlock language="python">
+{`# 传递字典给函数
+def print_person_info(person):
+    for key, value in person.items():
+        print(f"{key}: {value}")
+
+person = {"name": "John", "age": 30, "city": "New York"}
+print_person_info(person)  # 输出: name: John, age: 30, city: New York
+
+# 从函数返回字典
+def get_student_data():
+    return {
+        "name": "Mary",
+        "age": 25,
+        "courses": ["Math", "Physics", "Chemistry"]
+    }
+
+student = get_student_data()
+print(student)  # 输出: {'name': 'Mary', 'age': 25, 'courses': ['Math', 'Physics', 'Chemistry']}
+
+# 使用 ** 解包字典作为函数参数
+def greet(name, age):
+    return f"Hello, {name}! You are {age} years old."
+
+person = {"name": "John", "age": 30}
+print(greet(**person))  # 等价于 greet(name="John", age=30)，输出: Hello, John! You are 30 years old.
+
+# 收集关键字参数
+def print_info(**kwargs):
+    for key, value in kwargs.items():
+        print(f"{key}: {value}")
+
+print_info(name="Bob", age=35, city="Chicago")  # 输出: name: Bob, age: 35, city: Chicago`}
+</CodeBlock>
+
+## 6. 字典的性能考虑
+
+### 6.1 字典操作的时间复杂度
+
+<Alert variant="info">
+根据 Python 官方文档（https://wiki.python.org/moin/TimeComplexity）：
+> "字典是基于哈希表实现的，大多数操作的平均时间复杂度为 O(1)。"
+</Alert>
+
+<Tabs>
+<Tab label="常见操作的时间复杂度">
+
+| 操作 | 时间复杂度 |
+|------|------------|
+| 索引访问 (dict[key]) | O(1) |
+| 索引赋值 (dict[key] = value) | O(1) |
+| 删除 (del dict[key]) | O(1) |
+| 包含检查 (key in dict) | O(1) |
+| 长度 (len(dict)) | O(1) |
+| 迭代 (for key in dict) | O(n) |
+| 复制 (dict.copy()) | O(n) |
+| 合并 (dict1.update(dict2)) | O(k)，k是dict2的大小 |
+
+</Tab>
+<Tab label="性能优化示例">
+
+<CodeBlock language="python">
+{`# 优化：使用字典进行快速查找
+# 不推荐（使用列表进行查找）
+names = ["John", "Mary", "Bob", "Alice"]
+if "Bob" in names:  # O(n)
+    print("Found Bob")
+
+# 推荐（使用字典进行查找）
+names_dict = {name: True for name in names}
+if "Bob" in names_dict:  # O(1)
+    print("Found Bob")
+
+# 优化：使用 defaultdict 避免 KeyError
+from collections import defaultdict
+
+# 不推荐
+counts = {}
+words = ["apple", "banana", "apple", "cherry", "banana", "apple"]
+for word in words:
+    if word not in counts:
+        counts[word] = 0
+    counts[word] += 1
+
+# 推荐
+counts = defaultdict(int)
+for word in words:
+    counts[word] += 1
+
+print(counts)  # 输出: {'apple': 3, 'banana': 2, 'cherry': 1}
+
+# 优化：使用字典推导式代替循环
+# 不推荐
+squares = {}
+for x in range(10):
+    squares[x] = x**2
+
+# 推荐
+squares = {x: x**2 for x in range(10)}`}
+</CodeBlock>
+
+</Tab>
+</Tabs>
+
+## 7. 字典的替代方案
+
+### 7.1 collections 模块中的替代方案
+
+<CodeBlock language="python">
+{`# OrderedDict - 保持插入顺序的字典
+from collections import OrderedDict
+
+ordered_dict = OrderedDict()
+ordered_dict["a"] = 1
+ordered_dict["b"] = 2
+ordered_dict["c"] = 3
+
+for key, value in ordered_dict.items():
+    print(key, value)  # 输出: a 1, b 2, c 3
+
+# 在 Python 3.7+ 中，普通字典也保持插入顺序
+regular_dict = {"a": 1, "b": 2, "c": 3}
+for key, value in regular_dict.items():
+    print(key, value)  # 输出: a 1, b 2, c 3
+
+# defaultdict - 具有默认值的字典
+from collections import defaultdict
+
+# 创建一个默认值为0的字典
+counts = defaultdict(int)
+words = ["apple", "banana", "apple"]
+for word in words:
+    counts[word] += 1
+
+print(counts["apple"])  # 输出: 2
+print(counts["cherry"])  # 输出: 0 (默认值)
+
+# Counter - 计数工具
+from collections import Counter
+
+word_counts = Counter(words)
+print(word_counts)  # 输出: Counter({'apple': 2, 'banana': 1})
+print(word_counts.most_common(1))  # 输出: [('apple', 2)]
+
+# ChainMap - 合并多个字典
+from collections import ChainMap
+
+dict1 = {"a": 1, "b": 2}
+dict2 = {"b": 3, "c": 4}
+combined = ChainMap(dict1, dict2)
+
+print(combined["a"])  # 输出: 1 (来自dict1)
+print(combined["b"])  # 输出: 2 (来自dict1，优先使用第一个字典中的值)
+print(combined["c"])  # 输出: 4 (来自dict2)`}
+</CodeBlock>
+
+### 7.2 选择合适的数据结构
+
+<Alert variant="info">
+根据 Python 官方文档（https://docs.python.org/3/tutorial/datastructures.html#dictionaries）：
+> "字典是 Python 中最常用的数据结构之一，但在某些情况下，其他数据结构可能更合适。"
+</Alert>
+
+<CodeBlock language="python">
+{`# 适合使用字典的场景
+# 1. 需要通过键快速查找值
+phonebook = {"John": "555-1234", "Mary": "555-5678", "Bob": "555-9012"}
+print(phonebook["Mary"])  # 快速查找
+
+# 2. 需要统计元素出现次数
+words = ["apple", "banana", "apple", "cherry"]
+word_counts = {}
+for word in words:
+    word_counts[word] = word_counts.get(word, 0) + 1
+print(word_counts)  # 输出: {'apple': 2, 'banana': 1, 'cherry': 1}
+
+# 3. 需要分组数据
+students = [
+    {"name": "John", "major": "CS"},
+    {"name": "Mary", "major": "Math"},
+    {"name": "Bob", "major": "CS"}
+]
+
+# 按专业分组
+by_major = {}
+for student in students:
+    major = student["major"]
+    if major not in by_major:
+        by_major[major] = []
+    by_major[major].append(student)
+
+print(by_major)  # 输出: {'CS': [{'name': 'John', 'major': 'CS'}, {'name': 'Bob', 'major': 'CS'}], 'Math': [{'name': 'Mary', 'major': 'Math'}]}
+
+# 不适合使用字典的场景
+# 1. 需要保持元素顺序（使用列表或 OrderedDict）
+# 2. 需要频繁按索引访问（使用列表）
+# 3. 需要有序遍历（使用列表或排序的字典）`}
+</CodeBlock>
+
+## 8. 总结
+
+Python 字典是一种功能强大且灵活的数据结构：
+
+- **基本特性**：无序、可变、键值对数据结构
+- **常用操作**：创建、访问、修改、删除元素
+- **高级功能**：嵌套字典、字典推导式、视图对象
+- **性能优势**：大多数操作的平均时间复杂度为 O(1)
+- **替代方案**：OrderedDict、defaultdict、Counter 等
+
+在使用字典时，建议：
+- 优先使用字典推导式代替显式循环
+- 利用字典进行快速查找和成员检查
+- 理解字典的键必须是不可变的类型
+- 对于需要保持插入顺序的情况，使用 OrderedDict（Python 3.7+ 中普通字典也保持顺序）
+- 对于需要默认值的情况，使用 defaultdict
+
+通过掌握字典，你可以更高效地处理和操作数据，编写更简洁、更强大的 Python 程序。
+

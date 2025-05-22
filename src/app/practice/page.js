@@ -5,13 +5,16 @@ import Button from '@/components/Button';
 import Modal from '@/components/Modal';
 import Link from 'next/link';
 import { useToast } from '@/components/Toast';
+import { fetchWithThrow } from '@/lib/fetchWithThrow';
+import { Suspense } from 'react';
+import PageLoading from '@/app/loading';
 
 const COZE_CLIENT_ID = '90242169603687806132942397704438.app.coze';
 const COZE_REDIRECT_URI = 'http://localhost:3000/practice';
 const COZE_AUTH_URL = `https://www.coze.cn/api/permission/oauth2/authorize?response_type=code&client_id=${COZE_CLIENT_ID}&redirect_uri=${encodeURIComponent(COZE_REDIRECT_URI)}&state=practice`;
 const COZE_WORKFLOW_ID = process.env.COZE_WORKFLOW_ID || '7487949711161442367';
 
-export default function Practice() {
+function PracticeContent() {
   const [selectedLevel, setSelectedLevel] = useState('全部');
   const [selectedCategory, setSelectedCategory] = useState('全部');
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,13 +41,12 @@ export default function Practice() {
   
   // 加载真实题目数据
   useEffect(() => {
-    fetch('/api/exercises')
-      .then(res => res.json())
+    fetchWithThrow('/api/exercises')
       .then(data => {
         setExercises(data.exercises || []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(err => { throw err; });
   }, []);
   
   // 根据筛选条件过滤练习题
@@ -207,14 +209,14 @@ export default function Practice() {
       if (token) setAccessToken(token);
     }
   }, []);
-
+  
   // 新增：监听 shouldAutoExecute+accessToken+workflowContent，满足条件时自动执行
   useEffect(() => {
     if (shouldAutoExecute && accessToken && workflowContent) {
       executeWorkflow();
       setShouldAutoExecute(false);
       localStorage.removeItem('pendingWorkflow');
-    }
+      }
   }, [shouldAutoExecute, accessToken, workflowContent]);
 
   // 检查用户是否为管理员的逻辑，实际应用中应根据用户认证信息
@@ -541,5 +543,13 @@ export default function Practice() {
         </Modal>
       )}
     </div>
+  );
+}
+
+export default function Practice() {
+  return (
+    <Suspense fallback={<PageLoading />}> 
+      <PracticeContent />
+    </Suspense>
   );
 } 

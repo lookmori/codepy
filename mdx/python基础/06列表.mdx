@@ -1,0 +1,425 @@
+---
+title: 列表
+---
+
+# Python 列表知识点详解
+
+## 1. 列表基础
+
+### 1.1 什么是列表？
+
+列表是 Python 中最常用的数据结构之一，它是一个有序的、可变的、允许重复元素的集合。
+
+<Alert variant="info">
+根据 Python 官方文档（https://docs.python.org/3/tutorial/introduction.html#lists）：
+> "列表是一种序列类型，用于存储多个值。列表是可变的，这意味着可以修改它们的内容。"
+</Alert>
+
+下面是创建和访问列表的基本示例：
+
+<CodeBlock language="python">
+{`# 创建列表
+fruits = ["apple", "banana", "cherry"]
+numbers = [1, 3, 5, 7, 9]
+mixed = [1, "hello", True, 3.14]
+nested = [["a", "b"], [1, 2, 3]]
+
+# 访问列表元素
+print(fruits[0])  # 输出: apple
+print(numbers[2])  # 输出: 5
+print(mixed[-1])  # 输出: 3.14 (负数索引从末尾开始)
+print(nested[1][0])  # 输出: 1 (访问嵌套列表)
+
+# 修改列表元素
+fruits[1] = "grape"
+print(fruits)  # 输出: ['apple', 'grape', 'cherry']`}
+</CodeBlock>
+
+### 1.2 列表长度和切片
+
+<CodeBlock language="python">
+{`# 列表长度
+fruits = ["apple", "banana", "cherry", "date"]
+print(len(fruits))  # 输出: 4
+
+# 列表切片
+print(fruits[1:3])  # 输出: ['banana', 'cherry'] (索引1到2)
+print(fruits[:2])   # 输出: ['apple', 'banana'] (从开始到索引1)
+print(fruits[2:])   # 输出: ['cherry', 'date'] (从索引2到结束)
+print(fruits[-2:])  # 输出: ['cherry', 'date'] (最后两个元素)
+print(fruits[::2])  # 输出: ['apple', 'cherry'] (每隔一个元素)
+print(fruits[::-1]) # 输出: ['date', 'cherry', 'banana', 'apple'] (反转列表)`}
+</CodeBlock>
+
+## 2. 列表操作
+
+### 2.1 添加元素
+
+<CodeBlock language="python">
+{`# append() - 在列表末尾添加元素
+fruits = ["apple", "banana"]
+fruits.append("cherry")
+print(fruits)  # 输出: ['apple', 'banana', 'cherry']
+
+# extend() - 在列表末尾添加多个元素
+fruits.extend(["date", "elderberry"])
+print(fruits)  # 输出: ['apple', 'banana', 'cherry', 'date', 'elderberry']
+
+# insert() - 在指定位置插入元素
+fruits.insert(1, "blueberry")
+print(fruits)  # 输出: ['apple', 'blueberry', 'banana', 'cherry', 'date', 'elderberry']
+
+# 使用 + 运算符连接列表
+vegetables = ["carrot", "potato"]
+produce = fruits + vegetables
+print(produce)  # 输出: ['apple', 'blueberry', 'banana', 'cherry', 'date', 'elderberry', 'carrot', 'potato']`}
+</CodeBlock>
+
+### 2.2 删除元素
+
+<CodeBlock language="python">
+{`# remove() - 删除指定值的第一个匹配项
+fruits = ["apple", "banana", "cherry", "banana"]
+fruits.remove("banana")
+print(fruits)  # 输出: ['apple', 'cherry', 'banana']
+
+# pop() - 删除并返回指定位置的元素
+removed = fruits.pop(1)
+print(removed)  # 输出: cherry
+print(fruits)   # 输出: ['apple', 'banana']
+
+# del - 删除指定位置的元素
+del fruits[0]
+print(fruits)  # 输出: ['banana']
+
+# clear() - 清空列表
+fruits.clear()
+print(fruits)  # 输出: []`}
+</CodeBlock>
+
+### 2.3 修改和替换元素
+
+<CodeBlock language="python">
+{`# 修改单个元素
+numbers = [1, 2, 3, 4, 5]
+numbers[2] = 10
+print(numbers)  # 输出: [1, 2, 10, 4, 5]
+
+# 替换多个元素
+numbers[1:3] = [20, 30]
+print(numbers)  # 输出: [1, 20, 30, 4, 5]
+
+# 用切片删除元素
+numbers[1:3] = []
+print(numbers)  # 输出: [1, 4, 5]
+
+# 用切片插入元素
+numbers[1:1] = [2, 3]
+print(numbers)  # 输出: [1, 2, 3, 4, 5]`}
+</CodeBlock>
+
+## 3. 列表方法
+
+### 3.1 常用方法
+
+<CodeBlock language="python">
+{`# count() - 统计元素出现次数
+numbers = [1, 2, 3, 2, 4, 2]
+print(numbers.count(2))  # 输出: 3
+
+# index() - 返回元素第一次出现的索引
+print(numbers.index(2))  # 输出: 1
+print(numbers.index(2, 2))  # 输出: 3 (从索引2开始查找)
+
+# sort() - 对列表进行排序
+numbers.sort()
+print(numbers)  # 输出: [1, 2, 2, 2, 3, 4]
+
+# reverse() - 反转列表
+numbers.reverse()
+print(numbers)  # 输出: [4, 3, 2, 2, 2, 1]
+
+# copy() - 复制列表
+new_numbers = numbers.copy()
+print(new_numbers)  # 输出: [4, 3, 2, 2, 2, 1]`}
+</CodeBlock>
+
+### 3.2 高级方法
+
+<CodeBlock language="python">
+{`# 使用 sort() 的 key 参数
+words = ["apple", "Banana", "cherry", "Date"]
+words.sort()  # 默认按ASCII码排序
+print(words)  # 输出: ['Banana', 'Date', 'apple', 'cherry']
+
+# 忽略大小写排序
+words.sort(key=str.lower)
+print(words)  # 输出: ['apple', 'Banana', 'cherry', 'Date']
+
+# 自定义排序函数
+numbers = [1, 5, 2, 10, 3]
+numbers.sort(key=lambda x: x % 2)  # 按奇偶性排序
+print(numbers)  # 输出: [2, 10, 1, 5, 3]
+
+# 使用 sorted() 函数返回新列表
+original = [3, 1, 4, 1, 5, 9]
+sorted_list = sorted(original)
+print(sorted_list)  # 输出: [1, 1, 3, 4, 5, 9]
+print(original)     # 输出: [3, 1, 4, 1, 5, 9] (原始列表不变)`}
+</CodeBlock>
+
+## 4. 列表与循环
+
+### 4.1 遍历列表
+
+<CodeBlock language="python">
+{`# 使用 for 循环遍历列表
+fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    print(fruit)  # 依次输出: apple, banana, cherry
+
+# 使用索引遍历列表
+for i in range(len(fruits)):
+    print(fruits[i])  # 依次输出: apple, banana, cherry
+
+# 使用 enumerate() 获取索引和值
+for index, fruit in enumerate(fruits):
+    print(f"Index {index}: {fruit}")  # 依次输出: Index 0: apple, Index 1: banana, Index 2: cherry
+
+# 使用 while 循环遍历列表
+i = 0
+while i < len(fruits):
+    print(fruits[i])
+    i += 1  # 依次输出: apple, banana, cherry`}
+</CodeBlock>
+
+### 4.2 列表推导式
+
+列表推导式是创建列表的简洁方式。
+
+<CodeBlock language="python">
+{`# 基本列表推导式
+squares = [x**2 for x in range(5)]
+print(squares)  # 输出: [0, 1, 4, 9, 16]
+
+# 带条件的列表推导式
+even_numbers = [x for x in range(10) if x % 2 == 0]
+print(even_numbers)  # 输出: [0, 2, 4, 6, 8]
+
+# 嵌套列表推导式
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flattened = [element for row in matrix for element in row]
+print(flattened)  # 输出: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+# 条件表达式在列表推导式中
+numbers = [1, 2, 3, 4, 5]
+result = ["偶数" if x % 2 == 0 else "奇数" for x in numbers]
+print(result)  # 输出: ['奇数', '偶数', '奇数', '偶数', '奇数']`}
+</CodeBlock>
+
+## 5. 列表操作技巧
+
+### 5.1 列表合并与拆分
+
+<CodeBlock language="python">
+{`# 合并列表
+list1 = [1, 2, 3]
+list2 = [4, 5, 6]
+
+# 使用 + 运算符
+combined = list1 + list2
+print(combined)  # 输出: [1, 2, 3, 4, 5, 6]
+
+# 使用 extend() 方法
+list1.extend(list2)
+print(list1)  # 输出: [1, 2, 3, 4, 5, 6]
+
+# 使用 * 运算符复制列表
+duplicated = list1 * 2
+print(duplicated)  # 输出: [1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6]
+
+# 拆分列表
+numbers = [1, 2, 3, 4, 5, 6]
+first_half = numbers[:len(numbers)//2]
+second_half = numbers[len(numbers)//2:]
+print(first_half)  # 输出: [1, 2, 3]
+print(second_half)  # 输出: [4, 5, 6]`}
+</CodeBlock>
+
+### 5.2 列表反转与排序
+
+<CodeBlock language="python">
+{`# 反转列表
+numbers = [1, 2, 3, 4, 5]
+
+# 使用 reverse() 方法
+numbers.reverse()
+print(numbers)  # 输出: [5, 4, 3, 2, 1]
+
+# 使用切片反转
+numbers = [1, 2, 3, 4, 5]
+reversed_numbers = numbers[::-1]
+print(reversed_numbers)  # 输出: [5, 4, 3, 2, 1]
+
+# 排序列表
+words = ["banana", "apple", "cherry"]
+
+# 使用 sort() 方法
+words.sort()
+print(words)  # 输出: ['apple', 'banana', 'cherry']
+
+# 使用 sorted() 函数
+words = ["banana", "apple", "cherry"]
+sorted_words = sorted(words)
+print(sorted_words)  # 输出: ['apple', 'banana', 'cherry']
+print(words)  # 输出: ['banana', 'apple', 'cherry'] (原始列表不变)`}
+</CodeBlock>
+
+## 6. 列表的高级应用
+
+### 6.1 多维列表
+
+<CodeBlock language="python">
+{`# 创建二维列表
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+# 访问二维列表
+print(matrix[1][2])  # 输出: 6 (第二行第三列)
+
+# 修改二维列表
+matrix[0][0] = 10
+print(matrix)  # 输出: [[10, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+# 遍历二维列表
+for row in matrix:
+    for element in row:
+        print(element, end=" ")
+    print()  # 换行，输出: 10 2 3 4 5 6 7 8 9
+
+# 创建多维列表
+cube = [
+    [[1, 2], [3, 4]],
+    [[5, 6], [7, 8]]
+]
+print(cube[1][0][1])  # 输出: 6`}
+</CodeBlock>
+
+### 6.2 列表与函数
+
+<CodeBlock language="python">
+{`# 传递列表给函数
+def sum_list(numbers):
+    total = 0
+    for num in numbers:
+        total += num
+    return total
+
+numbers = [1, 2, 3, 4, 5]
+print(sum_list(numbers))  # 输出: 15
+
+# 从函数返回列表
+def generate_squares(n):
+    return [x**2 for x in range(1, n+1)]
+
+squares = generate_squares(5)
+print(squares)  # 输出: [1, 4, 9, 16, 25]
+
+# 修改列表的函数
+def double_list(numbers):
+    for i in range(len(numbers)):
+        numbers[i] *= 2
+    return numbers
+
+numbers = [1, 2, 3]
+doubled = double_list(numbers)
+print(doubled)  # 输出: [2, 4, 6]
+print(numbers)  # 输出: [2, 4, 6] (原始列表被修改)`}
+</CodeBlock>
+
+## 7. 列表的性能考虑
+
+### 7.1 列表操作的时间复杂度
+
+<Alert variant="info">
+根据 Python 官方文档（https://wiki.python.org/moin/TimeComplexity）：
+> "列表是基于动态数组实现的，不同操作的时间复杂度各不相同。"
+</Alert>
+
+<Tabs>
+<Tab label="常见操作的时间复杂度">
+
+| 操作 | 时间复杂度 |
+|------|------------|
+| 索引访问 (list[i]) | O(1) |
+| 索引赋值 (list[i] = x) | O(1) |
+| 末尾追加 (list.append(x)) | O(1) |
+| 末尾删除 (list.pop()) | O(1) |
+| 任意位置插入 (list.insert(i, x)) | O(n) |
+| 任意位置删除 (list.pop(i)) | O(n) |
+| 切片 (list[i:j]) | O(k)，k是切片大小 |
+| 扩展 (list.extend(other)) | O(k)，k是other的长度 |
+| 排序 (list.sort()) | O(n log n) |
+| 反转 (list.reverse()) | O(n) |
+| 包含检查 (x in list) | O(n) |
+| 复制 (list.copy()) | O(n) |
+
+</Tab>
+<Tab label="性能优化示例">
+
+<CodeBlock language="python">
+{`# 优化：使用列表推导式代替循环追加
+# 不推荐
+squares = []
+for x in range(1000):
+    squares.append(x**2)
+
+# 推荐
+squares = [x**2 for x in range(1000)]
+
+# 优化：使用 extend() 代替多次 append()
+# 不推荐
+numbers = []
+for i in range(10):
+    numbers.append(i)
+
+# 推荐
+numbers = list(range(10))
+
+# 优化：使用集合代替列表进行成员检查
+# 不推荐
+items = [1, 2, 3, 4, 5]
+if 3 in items:  # O(n)
+    print("找到元素")
+
+# 推荐
+items = {1, 2, 3, 4, 5}  # 使用集合
+if 3 in items:  # O(1)
+    print("找到元素")`}
+</CodeBlock>
+
+</Tab>
+</Tabs>
+
+## 8. 总结
+
+Python 列表是一种功能强大且灵活的数据结构：
+
+- **基本特性**：有序、可变、允许重复元素
+- **常用操作**：创建、访问、修改、添加、删除元素
+- **高级功能**：切片、排序、反转、复制、嵌套列表
+- **列表推导式**：简洁创建列表的方式
+- **性能考虑**：不同操作有不同的时间复杂度
+
+在使用列表时，建议：
+- 优先使用列表推导式代替显式循环
+- 避免在循环中频繁插入或删除元素
+- 对于大型数据集，考虑使用更高效的数据结构
+- 使用索引访问时确保索引在有效范围内
+- 理解列表是可变对象，传递给函数时可能被修改
+
+通过掌握列表，你可以更高效地处理和操作数据，编写更简洁、更强大的 Python 程序。
+

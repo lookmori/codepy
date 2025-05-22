@@ -1,0 +1,369 @@
+---
+title: if条件判断
+---
+
+# Python 条件判断知识点详解
+
+## 1. 条件判断基础
+
+### 1.1 if 语句
+
+在 Python 中，`if` 语句用于根据条件执行不同的代码块。
+
+<Alert variant="info">
+根据 Python 官方文档（https://docs.python.org/3/tutorial/controlflow.html#if-statements）：
+> "if 语句计算条件表达式，如果结果为真，则执行其后的语句块；如果为假，则跳过该语句块。"
+</Alert>
+
+下面是 `if` 语句的基本用法：
+
+<CodeBlock language="python">
+{`# 基本的 if 语句
+x = 10
+if x > 5:
+    print("x 大于 5")  # 当 x > 5 为真时执行
+
+# 比较操作符
+age = 20
+if age >= 18:
+    print("你已经成年了")  # 当 age >= 18 为真时执行
+
+# 逻辑操作符
+temperature = 25
+if temperature > 20 and temperature < 30:
+    print("温度适中")  # 当两个条件都为真时执行
+
+# 成员操作符
+fruits = ["apple", "banana", "orange"]
+if "apple" in fruits:
+    print("列表中包含苹果")  # 当 "apple" 在 fruits 中时执行`}
+</CodeBlock>
+
+### 1.2 if-else 语句
+
+`if-else` 语句用于在条件为真或假时分别执行不同的代码块。
+
+<CodeBlock language="python">
+{`# if-else 语句
+x = 3
+if x > 5:
+    print("x 大于 5")
+else:
+    print("x 小于或等于 5")  # 当 x > 5 为假时执行
+
+# 条件判断应用
+age = 16
+if age >= 18:
+    print("你可以投票")
+else:
+    print("你还不能投票")
+
+# 检查列表是否为空
+numbers = []
+if numbers:  # 空列表在布尔上下文中为 False
+    print("列表不为空")
+else:
+    print("列表为空")`}
+</CodeBlock>
+
+### 1.3 if-elif-else 语句
+
+`if-elif-else` 语句用于处理多个条件的情况。
+
+<CodeBlock language="python">
+{`# if-elif-else 语句
+score = 85
+if score >= 90:
+    print("成绩为 A")
+elif score >= 80:
+    print("成绩为 B")  # 当 score >= 80 且 score < 90 时执行
+elif score >= 70:
+    print("成绩为 C")
+elif score >= 60:
+    print("成绩为 D")
+else:
+    print("成绩为 F")  # 当所有条件都不满足时执行
+
+# 季节判断
+month = 12
+if 3 <= month <= 5:
+    print("春季")
+elif 6 <= month <= 8:
+    print("夏季")
+elif 9 <= month <= 11:
+    print("秋季")
+else:
+    print("冬季")
+
+# 多条件判断
+x = 10
+y = 5
+if x > 5 and y > 5:
+    print("x 和 y 都大于 5")
+elif x > 5 or y > 5:
+    print("x 或 y 大于 5")
+else:
+    print("x 和 y 都小于或等于 5")`}
+</CodeBlock>
+
+## 2. 条件表达式（三元运算符）
+
+Python 提供了简洁的条件表达式语法，类似于其他语言中的三元运算符。
+
+<CodeBlock language="python">
+{`# 条件表达式
+x = 10
+result = "x 大于 5" if x > 5 else "x 小于或等于 5"
+print(result)  # 输出: x 大于 5
+
+# 应用场景
+age = 20
+message = "可以投票" if age >= 18 else "不能投票"
+print(message)  # 输出: 可以投票
+
+# 列表推导式中的条件表达式
+numbers = [1, 2, 3, 4, 5]
+squared = [x**2 if x % 2 == 0 else x for x in numbers]
+print(squared)  # 输出: [1, 4, 3, 16, 5]`}
+</CodeBlock>
+
+## 3. 嵌套条件判断
+
+条件判断语句可以嵌套使用，以处理更复杂的逻辑。
+
+<CodeBlock language="python">
+{`# 嵌套 if 语句
+x = 15
+y = 20
+if x > 10:
+    if y > 15:
+        print("x 大于 10 且 y 大于 15")  # 当两个条件都满足时执行
+    else:
+        print("x 大于 10 但 y 小于或等于 15")
+else:
+    print("x 小于或等于 10")
+
+# 多级嵌套
+num = 25
+if num >= 0:
+    if num == 0:
+        print("数字为 0")
+    else:
+        if num % 2 == 0:
+            print("正数且为偶数")
+        else:
+            print("正数且为奇数")
+else:
+    print("负数")
+
+# 嵌套条件的优化写法
+num = 25
+if num >= 0 and num == 0:
+    print("数字为 0")
+elif num >= 0 and num % 2 == 0:
+    print("正数且为偶数")
+elif num >= 0:
+    print("正数且为奇数")
+else:
+    print("负数")`}
+</CodeBlock>
+
+## 4. 真值测试
+
+在 Python 中，任何对象都可以在布尔上下文中进行测试，以确定其真值。
+
+<Tabs>
+<Tab label="真值测试规则">
+
+<Alert variant="info">
+根据 Python 官方文档（https://docs.python.org/3/library/stdtypes.html#truth-value-testing）：
+> "默认情况下，一个对象被视为真，除非其类定义了 `__bool__()` 方法并返回 False，或者定义了 `__len__()` 方法并返回 0。"
+</Alert>
+
+</Tab>
+<Tab label="常见的假值对象">
+
+<CodeBlock language="python">
+{`# 常见的假值对象
+print(bool(None))       # 输出: False
+print(bool(False))      # 输出: False
+print(bool(0))          # 整数 0
+print(bool(0.0))        # 浮点数 0.0
+print(bool(0j))         # 复数 0j
+print(bool(''))         # 空字符串
+print(bool([]))         # 空列表
+print(bool(()))         # 空元组
+print(bool({}))         # 空字典
+print(bool(set()))      # 空集合
+print(bool(range(0)))   # 空范围`}
+</CodeBlock>
+
+</Tab>
+<Tab label="真值测试应用">
+
+<CodeBlock language="python">
+{`# 检查字符串是否为空
+text = ""
+if text:
+    print("字符串不为空")
+else:
+    print("字符串为空")  # 输出: 字符串为空
+
+# 检查列表是否包含元素
+numbers = [1, 2, 3]
+if numbers:
+    print("列表不为空")  # 输出: 列表不为空
+else:
+    print("列表为空")
+
+# 简化的条件判断
+value = None
+if value:
+    print("值存在")
+else:
+    print("值不存在")  # 输出: 值不存在`}
+</CodeBlock>
+
+</Tab>
+</Tabs>
+
+## 5. 比较操作符和逻辑操作符
+
+### 5.1 比较操作符
+
+<CodeBlock language="python">
+{`# 比较操作符
+x = 10
+y = 5
+print(x == y)   # 等于: False
+print(x != y)   # 不等于: True
+print(x > y)    # 大于: True
+print(x < y)    # 小于: False
+print(x >= y)   # 大于等于: True
+print(x <= y)   # 小于等于: False
+
+# 链式比较
+age = 25
+print(18 <= age < 30)  # 18 到 30 之间: True
+
+# 对象身份比较
+a = [1, 2, 3]
+b = [1, 2, 3]
+c = a
+print(a == b)   # 值相等: True
+print(a is b)   # 同一对象: False
+print(a is c)   # 同一对象: True`}
+</CodeBlock>
+
+### 5.2 逻辑操作符
+
+<CodeBlock language="python">
+{`# 逻辑操作符
+x = 5
+print(x > 0 and x < 10)  # 与: True
+print(x < 0 or x > 10)   # 或: False
+print(not x > 0)         # 非: False
+
+# 短路求值
+a = 10
+b = 5
+if a > 5 and b > 10:  # 第一个条件为真，但第二个为假
+    print("条件都满足")
+else:
+    print("条件不都满足")  # 输出: 条件不都满足
+
+# 短路求值的应用
+numbers = []
+if numbers and numbers[0] > 5:  # 避免空列表索引错误
+    print("第一个元素大于 5")
+else:
+    print("列表为空或第一个元素不大于 5")`}
+</CodeBlock>
+
+## 6. 条件判断的最佳实践
+
+### 6.1 简化条件判断
+
+<CodeBlock language="python">
+{`# 避免不必要的比较
+x = True
+# 不推荐
+if x == True:
+    print("x 为真")
+# 推荐
+if x:
+    print("x 为真")
+
+# 简化多条件判断
+value = 5
+# 不推荐
+if value == 1 or value == 2 or value == 3:
+    print("值在 1 到 3 之间")
+# 推荐
+if value in [1, 2, 3]:
+    print("值在 1 到 3 之间")
+
+# 使用字典替代复杂的 if-elif 链
+day = "Monday"
+# 不推荐
+if day == "Monday":
+    print(1)
+elif day == "Tuesday":
+    print(2)
+elif day == "Wednesday":
+    print(3)
+else:
+    print("其他")
+# 推荐
+day_map = {
+    "Monday": 1,
+    "Tuesday": 2,
+    "Wednesday": 3
+}
+print(day_map.get(day, "其他"))`}
+</CodeBlock>
+
+### 6.2 处理异常情况
+
+<CodeBlock language="python">
+{`# 处理用户输入
+try:
+    age = int(input("请输入你的年龄: "))
+    if age < 0:
+        print("年龄不能为负数")
+    elif age < 18:
+        print("未成年人")
+    else:
+        print("成年人")
+except ValueError:
+    print("请输入有效的数字")
+
+# 检查文件是否存在
+import os
+filename = "example.txt"
+if os.path.exists(filename):
+    with open(filename, "r") as f:
+        print(f.read())
+else:
+    print("文件不存在")`}
+</CodeBlock>
+
+## 7. 总结
+
+Python 条件判断提供了强大而灵活的逻辑控制能力：
+
+- **基本结构**：if、if-else、if-elif-else 语句
+- **条件表达式**：简洁的三元运算符语法
+- **嵌套条件**：处理复杂的逻辑判断
+- **真值测试**：任何对象都可以在布尔上下文中测试
+- **操作符**：丰富的比较和逻辑操作符
+
+在编写条件判断时，应遵循以下最佳实践：
+- 保持条件表达式简洁明了
+- 避免不必要的嵌套
+- 使用短路求值特性
+- 利用字典等数据结构简化复杂的条件判断
+- 正确处理异常情况
+
+通过掌握条件判断，你可以编写更智能、更灵活的 Python 程序。
+
