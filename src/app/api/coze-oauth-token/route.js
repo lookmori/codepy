@@ -4,7 +4,7 @@ export async function POST(request) {
   const { code } = await request.json();
   const client_id = '90242169603687806132942397704438.app.coze';
   const client_secret = process.env.COZE_CLIENT_SECRET;
-  const redirect_uri = process.env.COZE_REDIRECT_URI;
+  const redirect_uri = 'https://code.lookmori.cn/practice';
 
   if (!client_secret) {
     return NextResponse.json({ error: '未配置COZE_CLIENT_SECRET' }, { status: 500 });
