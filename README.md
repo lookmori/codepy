@@ -155,6 +155,42 @@
 
 (如果您希望接受贡献，可以在此添加贡献指南，例如如何提交 Issue 或 Pull Request)
 
-## License
+## 关于coze配置
 
-(在此添加您的项目 License 信息)
+### 生成问题工作流，返回需要满足以下格式
+- 输入为 `input`
+```json 
+{
+  "output": [
+    {
+      "example_input": "leetcode",
+      "example_output": "leotcede",
+      "problem_description": "编写一个函数，以字符串作为输入，反转该字符串中的元音字母。元音字母包括'a','e','i','o','u'（不区分大小写）。要求保持原字符串中非元音字符的位置不变。",
+      "problem_tag": "字符串,双指针",
+      "title": "反转字符串中的元音字母"
+    },
+    {
+      "example_input": "[[1,2,3],[4,5,6]]",
+      "example_output": "[[1,4],[2,5],[3,6]]",
+      "problem_description": "给定一个二维整数列表表示矩阵，返回该矩阵的转置。转置矩阵是指将矩阵的主对角线翻转，交换矩阵的行索引和列索引。要求不修改原矩阵，返回新的转置矩阵。",
+      "problem_tag": "列表,矩阵",
+      "title": "矩阵转置"
+    }
+  ]
+}
+// title 问题标题 ，problem_description 问题详细描述，problem_tag 问题标签，example_input 输入示例，example_output 输出示例
+```
+### 判断问题工作流，需要满足以下要求
+
+
+- 输入 `ques_desc`,`ques_ans`,分别是问题描述和答案
+
+- 输出格式如下
+
+```json
+{
+  "code_error": "print语句缺少逗号，导致语法错误",
+  "code_status": false
+}
+// code_error 错误信息，code_status 是否错误
+```

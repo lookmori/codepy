@@ -70,7 +70,7 @@ export default function RootLayout({ children }) {
       <head>
         <title>CodePy | Python 编程学习平台</title>
         <meta name="description" content="探索 Python 编程世界：从基础编程到数据科学，一站式学习平台，助您掌握 Python 技能" />
-        <link rel="icon" href="/python-logo.svg" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         
         {/* 立即设置主题的内联脚本，防止页面加载闪烁 */}
         <script
