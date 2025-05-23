@@ -10,7 +10,7 @@ import { Suspense } from 'react';
 import PageLoading from '@/app/loading';
 
 const COZE_CLIENT_ID = '90242169603687806132942397704438.app.coze';
-const COZE_REDIRECT_URI = 'https://code.lookmori.cn/practice';
+const COZE_REDIRECT_URI = 'https://www.code.lookmori.cn/practice';
 const COZE_AUTH_URL = `https://www.coze.cn/api/permission/oauth2/authorize?response_type=code&client_id=${COZE_CLIENT_ID}&redirect_uri=${encodeURIComponent(COZE_REDIRECT_URI)}&state=practice`;
 const COZE_WORKFLOW_ID = process.env.COZE_WORKFLOW_ID || '7487949711161442367';
 
