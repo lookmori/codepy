@@ -187,8 +187,7 @@ export default function Home() {
                     : "text-gray-600 group-hover:text-gray-700"
                   }`}
                 >掌握 Python 基础语法、数据类型、流程控制和函数编写等核心概念</p>
-                <Link 
-                  href="/basics"
+                <div 
                   ref={addToButtonsRef}
                   className={`font-medium inline-flex items-center group-hover:translate-x-1 transition-transform
                     ${darkMode 
@@ -200,7 +199,7 @@ export default function Home() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
-                </Link>
+                </div>
               </div>
               
               <div 
@@ -237,8 +236,7 @@ export default function Home() {
                     : "text-gray-600 group-hover:text-gray-700"
                   }`}
                 >通过实际项目学习，如网络爬虫、自动化脚本、Web 应用开发等</p>
-                <Link 
-                  href="/projects" 
+                <div 
                   ref={addToButtonsRef}
                   className={`font-medium inline-flex items-center group-hover:translate-x-1 transition-transform
                     ${darkMode 
@@ -250,7 +248,7 @@ export default function Home() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
-                </Link>
+                </div>
               </div>
               
               <div 
@@ -287,8 +285,7 @@ export default function Home() {
                     : "text-gray-600 group-hover:text-gray-700"
                   }`}
                 >学习数据分析、可视化、机器学习和人工智能的 Python 应用</p>
-                <Link 
-                  href="/data-science" 
+                <div 
                   ref={addToButtonsRef}
                   className={`font-medium inline-flex items-center group-hover:translate-x-1 transition-transform
                     ${darkMode 
@@ -300,7 +297,7 @@ export default function Home() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
-                </Link>
+                </div>
               </div>
             </div>
           </div>

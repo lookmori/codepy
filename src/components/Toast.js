@@ -47,7 +47,7 @@ const TOAST_TYPES = {
 };
 
 // 单个Toast组件
-function ToastItem({ id, type = 'info', title, message, duration = 3000, onClose }) {
+function ToastItem({ id, type = 'info', title, message, duration = 5000, onClose }) {
   const { bgColor, textColor, icon } = TOAST_TYPES[type] || TOAST_TYPES.info;
   
   useEffect(() => {

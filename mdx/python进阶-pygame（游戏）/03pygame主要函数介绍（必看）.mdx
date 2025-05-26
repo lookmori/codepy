@@ -1,0 +1,376 @@
+---
+title: Pygame 常用函数详解
+---
+
+## 1. 游戏初始化函数
+
+### 1.1 pygame.init()
+
+这个函数就像是游戏的"启动按钮"，你必须先按下它，游戏才能开始运行。它会初始化所有 Pygame 需要的功能，比如声音、图像等。
+
+<CodeBlock language="python">
+{`import pygame
+
+# 初始化Pygame
+pygame.init()
+
+# 现在你可以使用Pygame的各种功能了`}
+</CodeBlock>
+
+### 1.2 pygame.quit()
+
+这个函数是游戏的"关闭按钮"，当你想要结束游戏时，就调用它。它会关闭所有 Pygame 初始化的功能。
+
+<CodeBlock language="python">
+{`# 游戏结束时调用
+pygame.quit()
+
+# 退出程序
+quit()`}
+</CodeBlock>
+
+## 2. 窗口和显示函数
+
+### 2.1 pygame.display.set_mode()
+
+这个函数就像是给游戏设置一个"画布"，你可以指定画布的大小。比如你想要一个 800 像素宽、600 像素高的画布，就可以这样写：
+
+<CodeBlock language="python">
+{`# 设置游戏窗口大小为800x600像素
+dis_width = 800
+dis_height = 600
+dis = pygame.display.set_mode((dis_width, dis_height))
+
+# 给窗口起个名字
+pygame.display.set_caption('贪吃蛇游戏')`}
+</CodeBlock>
+
+### 2.2 pygame.display.set_caption()
+
+这个函数就像是给游戏窗口贴一个"标签"，让你知道这个窗口是做什么的。比如你可以给贪吃蛇游戏的窗口贴上"贪吃蛇游戏"的标签。
+
+<CodeBlock language="python">
+{`# 设置窗口标题
+pygame.display.set_caption('贪吃蛇游戏')`}
+</CodeBlock>
+
+### 2.3 pygame.display.update()
+
+这个函数就像是"刷新"你的画布，当你在画布上画了新东西后，必须调用这个函数，才能让新画的东西显示出来。
+
+<CodeBlock language="python">
+{`# 在画布上画了东西后，刷新显示
+pygame.display.update()`}
+</CodeBlock>
+
+### 2.4 pygame.display.flip()
+
+这个函数和 `pygame.display.update()` 很像，也是刷新显示。不过 `update()` 只刷新你修改过的部分，而 `flip()` 会刷新整个屏幕。
+
+<CodeBlock language="python">
+{`# 刷新整个屏幕
+pygame.display.flip()`}
+</CodeBlock>
+
+### 2.5 dis.fill()
+
+这个函数就像是用颜料"涂满"整个画布。你可以选择不同的颜色，比如红色、蓝色、绿色等。
+
+<CodeBlock language="python">
+{`# 定义颜色（红色、绿色、蓝色的组合）
+blue = (50, 153, 213)
+
+# 用蓝色涂满画布
+dis.fill(blue)`}
+</CodeBlock>
+
+## 3. 绘图函数
+
+### 3.1 pygame.draw.rect()
+
+这个函数就像是用笔画一个"方块"。你需要告诉它在画布的哪个位置画，以及画多大的方块。
+
+<CodeBlock language="python">
+{`# 定义颜色
+black = (0, 0, 0)
+
+# 在坐标(100, 100)处画一个10x10像素的黑色方块
+pygame.draw.rect(dis, black, [100, 100, 10, 10])`}
+</CodeBlock>
+
+### 3.2 pygame.draw.circle()
+
+这个函数就像是用笔画一个"圆圈"。你需要告诉它圆心在哪里，以及圆的半径是多少。
+
+<CodeBlock language="python">
+{`# 定义颜色
+red = (255, 0, 0)
+
+# 在坐标(200, 200)处画一个半径为15像素的红色圆圈
+pygame.draw.circle(dis, red, (200, 200), 15)`}
+</CodeBlock>
+
+### 3.3 pygame.draw.line()
+
+这个函数就像是用笔画一条"直线"。你需要告诉它从哪里开始画，到哪里结束，以及线的宽度是多少。
+
+<CodeBlock language="python">
+{`# 定义颜色
+green = (0, 255, 0)
+
+# 画一条从(50, 50)到(150, 150)的绿色直线，线宽为2像素
+pygame.draw.line(dis, green, (50, 50), (150, 150), 2)`}
+</CodeBlock>
+
+## 4. 事件处理函数
+
+### 4.1 pygame.event.get()
+
+这个函数就像是一个"事件收集器"，它会收集所有玩家的操作，比如按下键盘、点击鼠标等。
+
+<CodeBlock language="python">
+{`# 获取所有事件
+for event in pygame.event.get():
+    # 处理事件...`}
+</CodeBlock>
+
+### 4.2 pygame.KEYDOWN
+
+这不是一个函数，而是一个"事件类型"，表示玩家按下了键盘上的某个键。
+
+<CodeBlock language="python">
+{`# 检查是否有按键被按下
+for event in pygame.event.get():
+    if event.type == pygame.KEYDOWN:
+        # 处理按键事件...`}
+</CodeBlock>
+
+### 4.3 pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN
+
+这些也不是函数，而是表示键盘上的方向键（左、右、上、下）。
+
+<CodeBlock language="python">
+{`# 检查是否按下了方向键
+for event in pygame.event.get():
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_LEFT:
+            print("你按下了左方向键")
+        elif event.key == pygame.K_RIGHT:
+            print("你按下了右方向键")
+        elif event.key == pygame.K_UP:
+            print("你按下了上方向键")
+        elif event.key == pygame.K_DOWN:
+            print("你按下了下方向键")`}
+</CodeBlock>
+
+## 5. 时间控制函数
+
+### 5.1 pygame.time.Clock()
+
+这个函数就像是游戏的"时钟"，它可以控制游戏运行的速度。
+
+<CodeBlock language="python">
+{`# 创建一个时钟对象
+clock = pygame.time.Clock()
+
+# 在游戏主循环中使用
+while True:
+    # 游戏逻辑...
+    
+    # 控制游戏速度为30帧每秒
+    clock.tick(30)`}
+</CodeBlock>
+
+### 5.2 clock.tick()
+
+这个函数就像是"调整时钟的速度"。你可以指定游戏每秒运行多少帧（FPS）。
+
+<CodeBlock language="python">
+{`# 控制游戏速度为60帧每秒
+clock.tick(60)`}
+</CodeBlock>
+
+### 5.3 pygame.time.delay()
+
+这个函数就像是让游戏"暂停"一段时间。你可以指定暂停多少毫秒（1秒=1000毫秒）。
+
+<CodeBlock language="python">
+{`# 让游戏暂停1000毫秒（1秒）
+pygame.time.delay(1000)`}
+</CodeBlock>
+
+## 6. 字体和文本函数
+
+### 6.1 pygame.font.SysFont()
+
+这个函数就像是选择一种"字体"。你可以选择电脑上已有的字体，比如"宋体"、"黑体"等。
+
+<CodeBlock language="python">
+{`# 创建一个字体对象，字体大小为25
+font = pygame.font.SysFont("comicsansms", 25)
+
+# 也可以使用中文字体
+chinese_font = pygame.font.SysFont("SimHei", 30)  # SimHei是黑体的英文名称`}
+</CodeBlock>
+
+### 6.2 font.render()
+
+这个函数就像是用选定的字体"写一段文字"。你需要告诉它写什么内容，以及文字的颜色。
+
+<CodeBlock language="python">
+{`# 定义颜色
+white = (255, 255, 255)
+
+# 创建一个字体对象
+font = pygame.font.SysFont("comicsansms", 25)
+
+# 用白色写一段文字
+text = font.render("Hello, World!", True, white)
+
+# 将文字放在画布上的(100, 100)位置
+dis.blit(text, (100, 100))`}
+</CodeBlock>
+
+### 6.3 dis.blit()
+
+这个函数就像是把"写好的文字"贴到画布上的某个位置。
+
+<CodeBlock language="python">
+{`# 将文字对象text贴到画布的(100, 100)位置
+dis.blit(text, (100, 100))`}
+</CodeBlock>
+
+## 7. 其他常用函数
+
+### 7.1 random.randrange()
+
+这个函数不是 Pygame 的函数，而是 Python 自带的函数，它可以生成一个随机数。
+
+<CodeBlock language="python">
+{`import random
+
+# 生成一个0到9之间的随机整数
+random_number = random.randrange(0, 10)
+print(random_number)  # 可能输出0、1、2、3、4、5、6、7、8或9`}
+</CodeBlock>
+
+### 7.2 round()
+
+这个函数也不是 Pygame 的函数，它可以将一个小数"四舍五入"为整数。
+
+<CodeBlock language="python">
+{`# 将3.14四舍五入为整数
+rounded_number = round(3.14)
+print(rounded_number)  # 输出3
+
+# 将3.78四舍五入为整数
+rounded_number = round(3.78)
+print(rounded_number)  # 输出4`}
+</CodeBlock>
+
+### 7.3 len()
+
+这个函数可以计算一个列表或字符串有多长。
+
+<CodeBlock language="python">
+{`# 计算列表的长度
+my_list = [1, 2, 3, 4, 5]
+list_length = len(my_list)
+print(list_length)  # 输出5
+
+# 计算字符串的长度
+my_string = "Hello"
+string_length = len(my_string)
+print(string_length)  # 输出5`}
+</CodeBlock>
+
+## 8. 综合示例
+
+下面是一个使用了这些函数的简单示例，画一个移动的方块：
+
+<CodeBlock language="python">
+{`import pygame
+import time
+
+# 初始化Pygame
+pygame.init()
+
+# 设置游戏窗口
+dis_width = 800
+dis_height = 600
+dis = pygame.display.set_mode((dis_width, dis_height))
+pygame.display.set_caption('移动的方块')
+
+# 定义颜色
+white = (255, 255, 255)
+black = (0, 0, 0)
+red = (255, 0, 0)
+
+# 创建一个时钟对象
+clock = pygame.time.Clock()
+
+# 方块的初始位置和大小
+x1 = dis_width / 2
+y1 = dis_height / 2
+x1_change = 0
+y1_change = 0
+block_size = 20
+
+# 游戏主循环
+game_over = False
+while not game_over:
+    # 处理事件
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                x1_change = -10
+                y1_change = 0
+            elif event.key == pygame.K_RIGHT:
+                x1_change = 10
+                y1_change = 0
+            elif event.key == pygame.K_UP:
+                y1_change = -10
+                x1_change = 0
+            elif event.key == pygame.K_DOWN:
+                y1_change = 10
+                x1_change = 0
+    
+    # 更新方块位置
+    x1 += x1_change
+    y1 += y1_change
+    
+    # 清屏
+    dis.fill(white)
+    
+    # 绘制方块
+    pygame.draw.rect(dis, black, [x1, y1, block_size, block_size])
+    
+    # 刷新显示
+    pygame.display.update()
+    
+    # 控制游戏速度
+    clock.tick(30)
+
+# 结束游戏
+pygame.quit()
+quit()`}
+</CodeBlock>
+
+这个示例中使用了我们学过的很多函数：
+- `pygame.init()` 初始化 Pygame
+- `pygame.display.set_mode()` 设置游戏窗口
+- `pygame.display.set_caption()` 设置窗口标题
+- `pygame.time.Clock()` 创建时钟对象
+- `clock.tick()` 控制游戏速度
+- `pygame.event.get()` 获取事件
+- `pygame.KEYDOWN` 检测按键按下
+- `pygame.K_LEFT` 等检测特定方向键
+- `dis.fill()` 清屏
+- `pygame.draw.rect()` 绘制方块
+- `pygame.display.update()` 刷新显示
+- `pygame.quit()` 结束游戏
+
+通过这个示例，你可以看到这些函数是如何一起工作的。希望这些解释能帮助你理解 Pygame 的基本函数！
+

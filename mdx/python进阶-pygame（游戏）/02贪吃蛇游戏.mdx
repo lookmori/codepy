@@ -1,0 +1,726 @@
+---
+title: 使用 Pygame 制作贪吃蛇游戏的完整指南
+---
+
+
+
+<Alert variant="info">
+在本文件中会使用到很多pygame的函数，请先查看[pygame主要函数介绍](./03pygame主要函数介绍（必看）.mdx)文件
+
+</Alert>
+## 1. 准备工作
+
+### 1.1 安装 Pygame
+
+首先需要安装 Pygame 库。Pygame 是一个专门用于游戏开发的 Python 库。
+
+<CodeBlock language="bash">
+{`pip install pygame`}
+</CodeBlock>
+
+<Alert variant="info">
+根据 Pygame 官方文档（https://www.pygame.org/wiki/GettingStarted）：
+> "Pygame 是一组专门为开发视频游戏而设计的 Python 模块。它在 SDL 库的基础上增加了易用性，使 Python 能够创建功能丰富的游戏和多媒体程序。"
+
+</Alert>
+
+### 1.2 游戏开发环境设置
+
+在开始编写游戏代码之前，让我们设置基本的开发环境：
+
+<CodeBlock language="python">
+{`import pygame
+import time
+import random
+
+# 初始化pygame
+pygame.init()
+
+# 设置游戏窗口
+dis_width = 800
+dis_height = 600
+dis = pygame.display.set_mode((dis_width, dis_height))
+pygame.display.set_caption('贪吃蛇游戏')
+
+# 设置游戏时钟
+clock = pygame.time.Clock()
+
+# 定义颜色
+white = (255, 255, 255)
+yellow = (255, 255, 102)
+black = (0, 0, 0)
+red = (213, 50, 80)
+green = (0, 255, 0)
+blue = (50, 153, 213)`}
+</CodeBlock>
+
+## 2. 游戏基本结构
+
+### 2.1 游戏初始化
+
+游戏初始化部分设置了游戏窗口、字体和基本参数：
+
+<CodeBlock language="python">
+{`# 蛇的初始大小
+snake_block = 10
+snake_speed = 15
+
+# 字体设置
+font_style = pygame.font.SysFont("bahnschrift", 25)
+score_font = pygame.font.SysFont("comicsansms", 35)
+
+# 显示分数
+def Your_score(score):
+    value = score_font.render("分数: " + str(score), True, yellow)
+    dis.blit(value, [10, 10])
+
+# 绘制蛇
+def our_snake(snake_block, snake_list):
+    for x in snake_list:
+        pygame.draw.rect(dis, black, [x[0], x[1], snake_block, snake_block])
+
+# 显示消息
+def message(msg, color):
+    mesg = font_style.render(msg, True, color)
+    dis.blit(mesg, [dis_width / 6, dis_height / 3])`}
+</CodeBlock>
+
+### 2.2 游戏主循环
+
+游戏主循环是游戏的核心，它负责处理用户输入、更新游戏状态和渲染游戏画面：
+
+<CodeBlock language="python">
+{`def gameLoop():
+    game_over = False
+    game_close = False
+
+    # 蛇的初始位置
+    x1 = dis_width / 2
+    y1 = dis_height / 2
+
+    # 蛇的初始移动方向
+    x1_change = 0
+    y1_change = 0
+
+    # 蛇身列表
+    snake_List = []
+    Length_of_snake = 1
+
+    # 食物位置
+    foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+    foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+
+    while not game_over:
+
+        while game_close == True:
+            dis.fill(blue)
+            message("游戏结束! 按 Q-退出 或 C-继续", red)
+            Your_score(Length_of_snake - 1)
+            pygame.display.update()
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        game_over = True
+                        game_close = False
+                    if event.key == pygame.K_c:
+                        gameLoop()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_over = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    x1_change = -snake_block
+                    y1_change = 0
+                elif event.key == pygame.K_RIGHT:
+                    x1_change = snake_block
+                    y1_change = 0
+                elif event.key == pygame.K_UP:
+                    y1_change = -snake_block
+                    x1_change = 0
+                elif event.key == pygame.K_DOWN:
+                    y1_change = snake_block
+                    x1_change = 0
+
+        # 检查是否撞墙
+        if x1 >= dis_width or x1 < 0 or y1 >= dis_height or y1 < 0:
+            game_close = True
+            
+        # 更新蛇的位置
+        x1 += x1_change
+        y1 += y1_change
+        dis.fill(blue)
+        
+        # 绘制食物
+        pygame.draw.rect(dis, green, [foodx, foody, snake_block, snake_block])
+        
+        # 更新蛇身
+        snake_Head = []
+        snake_Head.append(x1)
+        snake_Head.append(y1)
+        snake_List.append(snake_Head)
+        
+        # 如果蛇移动，删除尾部
+        if len(snake_List) > Length_of_snake:
+            del snake_List[0]
+
+        # 检查是否撞到自己
+        for x in snake_List[:-1]:
+            if x == snake_Head:
+                game_close = True
+
+        # 绘制蛇
+        our_snake(snake_block, snake_List)
+        
+        # 显示分数
+        Your_score(Length_of_snake - 1)
+
+        pygame.display.update()
+
+        # 吃到食物
+        if x1 == foodx and y1 == foody:
+            foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+            foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+            Length_of_snake += 1
+
+        clock.tick(snake_speed)
+
+    pygame.quit()
+    quit()
+
+# 启动游戏
+gameLoop()`}
+</CodeBlock>
+
+## 3. 游戏核心功能解析
+
+### 3.1 游戏对象设计
+
+<Alert variant="info">
+根据 Pygame 官方文档（https://www.pygame.org/docs/）：
+> "Pygame 使用 Surface 对象表示图像和屏幕，Rect 对象表示矩形区域，这些是游戏开发的基础。"
+</Alert>
+
+<CodeBlock language="python">
+{`# 蛇：使用列表表示，每个元素是一个坐标元组 (x, y)
+snake_List = []
+
+# 食物：使用随机生成的坐标表示
+foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+
+# 绘制蛇和食物
+pygame.draw.rect(dis, black, [x[0], x[1], snake_block, snake_block])  # 蛇
+pygame.draw.rect(dis, green, [foodx, foody, snake_block, snake_block])  # 食物`}
+</CodeBlock>
+
+### 3.2 游戏控制逻辑
+
+<CodeBlock language="python">
+{`# 处理键盘事件
+for event in pygame.event.get():
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_LEFT:
+            x1_change = -snake_block
+            y1_change = 0
+        elif event.key == pygame.K_RIGHT:
+            x1_change = snake_block
+            y1_change = 0
+        elif event.key == pygame.K_UP:
+            y1_change = -snake_block
+            x1_change = 0
+        elif event.key == pygame.K_DOWN:
+            y1_change = snake_block
+            x1_change = 0`}
+</CodeBlock>
+
+### 3.3 碰撞检测
+
+<CodeBlock language="python">
+{`# 检查是否撞墙
+if x1 >= dis_width or x1 < 0 or y1 >= dis_height or y1 < 0:
+    game_close = True
+
+# 检查是否撞到自己
+for x in snake_List[:-1]:
+    if x == snake_Head:
+        game_close = True
+
+# 检查是否吃到食物
+if x1 == foodx and y1 == foody:
+    foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+    foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+    Length_of_snake += 1`}
+</CodeBlock>
+
+### 3.4 游戏状态更新
+
+<CodeBlock language="python">
+{`# 更新蛇的位置
+x1 += x1_change
+y1 += y1_change
+
+# 更新蛇身
+snake_Head = []
+snake_Head.append(x1)
+snake_Head.append(y1)
+snake_List.append(snake_Head)
+
+# 如果蛇移动，删除尾部
+if len(snake_List) > Length_of_snake:
+    del snake_List[0]`}
+</CodeBlock>
+
+## 4. 游戏功能扩展
+
+### 4.1 添加难度级别
+
+可以根据分数增加蛇的速度，使游戏更具挑战性：
+
+<CodeBlock language="python">
+{`# 在游戏主循环中添加难度级别
+if Length_of_snake > 5:
+    snake_speed = 20
+if Length_of_snake > 10:
+    snake_speed = 25
+if Length_of_snake > 15:
+    snake_speed = 30
+
+# 或者使用动态计算
+snake_speed = 15 + (Length_of_snake // 5) * 5`}
+</CodeBlock>
+
+### 4.2 添加不同类型的食物
+
+<CodeBlock language="python">
+{`# 在游戏初始化部分添加食物类型
+food_types = [
+    {"color": green, "points": 1, "duration": 100},  # 普通食物
+    {"color": red, "points": 3, "duration": 50},    # 特殊食物，加分更多
+    {"color": yellow, "points": 5, "duration": 30}  # 稀有食物，加分最多
+]
+
+# 随机选择食物类型
+current_food = random.choice(food_types)
+food_color = current_food["color"]
+food_points = current_food["points"]
+food_duration = current_food["duration"]  # 食物存在的帧数
+
+# 绘制食物
+pygame.draw.rect(dis, food_color, [foodx, foody, snake_block, snake_block])
+
+# 吃到食物时
+if x1 == foodx and y1 == foody:
+    Length_of_snake += food_points
+    current_food = random.choice(food_types)
+    food_color = current_food["color"]
+    food_points = current_food["points"]
+    foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+    foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0`}
+</CodeBlock>
+
+### 4.3 添加障碍物
+
+<CodeBlock language="python">
+{`# 在游戏初始化部分添加障碍物列表
+obstacles = []
+
+# 随机生成障碍物
+def generate_obstacle():
+    x = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+    y = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+    return [x, y]
+
+# 生成初始障碍物
+for _ in range(5):
+    obstacles.append(generate_obstacle())
+
+# 绘制障碍物
+for obstacle in obstacles:
+    pygame.draw.rect(dis, red, [obstacle[0], obstacle[1], snake_block, snake_block])
+
+# 检查是否撞到障碍物
+for obstacle in obstacles:
+    if x1 == obstacle[0] and y1 == obstacle[1]:
+        game_close = True
+
+# 随着游戏进行，增加障碍物
+if Length_of_snake % 3 == 0 and random.random() < 0.3:
+    obstacles.append(generate_obstacle())`}
+</CodeBlock>
+
+### 4.4 添加音效和背景音乐
+
+<CodeBlock language="python">
+{`# 在游戏初始化部分添加音效
+pygame.mixer.init()
+
+# 加载音效
+eat_sound = pygame.mixer.Sound("eat.wav")
+crash_sound = pygame.mixer.Sound("crash.wav")
+
+# 播放背景音乐
+pygame.mixer.music.load("background.mp3")
+pygame.mixer.music.play(-1)  # -1 表示循环播放
+
+# 吃到食物时播放音效
+if x1 == foodx and y1 == foody:
+    eat_sound.play()
+    # 其他代码...
+
+# 游戏结束时播放音效
+if game_close:
+    pygame.mixer.music.stop()
+    crash_sound.play()
+    time.sleep(1)  # 等待音效播放完毕`}
+</CodeBlock>
+
+## 5. 游戏菜单和界面优化
+
+### 5.1 添加开始菜单
+
+<CodeBlock language="python">
+{`def show_start_menu():
+    menu = True
+    while menu:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    menu = False
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    quit()
+        
+        dis.fill(blue)
+        message("贪吃蛇游戏", white)
+        message("按空格键开始游戏，按Q退出", yellow)
+        pygame.display.update()
+        clock.tick(15)
+
+# 在游戏主函数中调用开始菜单
+def gameLoop():
+    show_start_menu()
+    # 游戏主循环代码...`}
+</CodeBlock>
+
+### 5.2 添加暂停功能
+
+<CodeBlock language="python">
+{`# 在游戏主循环中添加暂停功能
+paused = False
+
+# 处理暂停键
+if event.type == pygame.KEYDOWN:
+    if event.key == pygame.K_p:
+        paused = not paused
+
+# 暂停状态
+if paused:
+    message("游戏暂停，按P继续", yellow)
+    pygame.display.update()
+    time.sleep(0.5)  # 防止按键重复
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_over = True
+                paused = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    paused = False`}
+</CodeBlock>
+
+## 6. 调试和优化技巧
+
+### 6.1 调试技巧
+
+<CodeBlock language="python">
+{`# 添加调试信息
+def debug_info():
+    # 显示蛇的位置和长度
+    debug_font = pygame.font.SysFont("comicsansms", 18)
+    pos_text = debug_font.render(f"位置: ({x1}, {y1})", True, white)
+    len_text = debug_font.render(f"长度: {Length_of_snake}", True, white)
+    dis.blit(pos_text, [10, 50])
+    dis.blit(len_text, [10, 70])
+
+# 在游戏主循环中调用调试信息
+if debug_mode:
+    debug_info()`}
+</CodeBlock>
+
+### 6.2 性能优化
+
+<CodeBlock language="python">
+{`# 使用 Rect 对象进行碰撞检测（可能更高效）
+snake_rect = pygame.Rect(x1, y1, snake_block, snake_block)
+food_rect = pygame.Rect(foodx, foody, snake_block, snake_block)
+
+# 检查碰撞
+if snake_rect.colliderect(food_rect):
+    # 处理吃到食物的逻辑
+
+# 使用 set 存储蛇身位置，提高碰撞检测速度
+snake_set = set(tuple(pos) for pos in snake_List[:-1])
+if tuple(snake_Head) in snake_set:
+    game_close = True`}
+</CodeBlock>
+
+## 7. 完整游戏代码
+
+下面是一个包含所有功能的完整贪吃蛇游戏代码：
+
+<CodeBlock language="python">
+{`import pygame
+import time
+import random
+
+# 初始化pygame
+pygame.init()
+
+# 设置游戏窗口
+dis_width = 800
+dis_height = 600
+dis = pygame.display.set_mode((dis_width, dis_height))
+pygame.display.set_caption('贪吃蛇游戏')
+
+# 设置游戏时钟
+clock = pygame.time.Clock()
+
+# 定义颜色
+white = (255, 255, 255)
+yellow = (255, 255, 102)
+black = (0, 0, 0)
+red = (213, 50, 80)
+green = (0, 255, 0)
+blue = (50, 153, 213)
+
+# 蛇的初始大小
+snake_block = 10
+snake_speed = 15
+
+# 字体设置
+font_style = pygame.font.SysFont("bahnschrift", 25)
+score_font = pygame.font.SysFont("comicsansms", 35)
+
+# 显示分数
+def Your_score(score):
+    value = score_font.render("分数: " + str(score), True, yellow)
+    dis.blit(value, [10, 10])
+
+# 绘制蛇
+def our_snake(snake_block, snake_list):
+    for x in snake_list:
+        pygame.draw.rect(dis, black, [x[0], x[1], snake_block, snake_block])
+
+# 显示消息
+def message(msg, color):
+    mesg = font_style.render(msg, True, color)
+    dis.blit(mesg, [dis_width / 6, dis_height / 3])
+
+# 显示开始菜单
+def show_start_menu():
+    menu = True
+    while menu:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    menu = False
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    quit()
+        
+        dis.fill(blue)
+        message("贪吃蛇游戏", white)
+        message("按空格键开始游戏，按Q退出", yellow)
+        pygame.display.update()
+        clock.tick(15)
+
+# 游戏主循环
+def gameLoop():
+    show_start_menu()
+    
+    game_over = False
+    game_close = False
+
+    # 蛇的初始位置
+    x1 = dis_width / 2
+    y1 = dis_height / 2
+
+    # 蛇的初始移动方向
+    x1_change = 0
+    y1_change = 0
+
+    # 蛇身列表
+    snake_List = []
+    Length_of_snake = 1
+
+    # 食物类型
+    food_types = [
+        {"color": green, "points": 1},  # 普通食物
+        {"color": red, "points": 3},    # 特殊食物，加分更多
+        {"color": yellow, "points": 5}  # 稀有食物，加分最多
+    ]
+    
+    # 初始食物
+    current_food = random.choice(food_types)
+    food_color = current_food["color"]
+    food_points = current_food["points"]
+    foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+    foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+    
+    # 障碍物
+    obstacles = []
+    for _ in range(5):
+        ox = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+        oy = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+        obstacles.append([ox, oy])
+    
+    # 暂停状态
+    paused = False
+
+    while not game_over:
+
+        while game_close == True:
+            dis.fill(blue)
+            message("游戏结束! 按 Q-退出 或 C-继续", red)
+            Your_score(Length_of_snake - 1)
+            pygame.display.update()
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        game_over = True
+                        game_close = False
+                    if event.key == pygame.K_c:
+                        gameLoop()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_over = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT and x1_change != snake_block:
+                    x1_change = -snake_block
+                    y1_change = 0
+                elif event.key == pygame.K_RIGHT and x1_change != -snake_block:
+                    x1_change = snake_block
+                    y1_change = 0
+                elif event.key == pygame.K_UP and y1_change != snake_block:
+                    y1_change = -snake_block
+                    x1_change = 0
+                elif event.key == pygame.K_DOWN and y1_change != -snake_block:
+                    y1_change = snake_block
+                    x1_change = 0
+                elif event.key == pygame.K_p:
+                    paused = not paused
+
+        # 暂停状态
+        if paused:
+            message("游戏暂停，按P继续", yellow)
+            pygame.display.update()
+            time.sleep(0.5)  # 防止按键重复
+            while paused:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        game_over = True
+                        paused = False
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_p:
+                            paused = False
+
+        # 检查是否撞墙
+        if x1 >= dis_width or x1 < 0 or y1 >= dis_height or y1 < 0:
+            game_close = True
+            
+        # 更新蛇的位置
+        x1 += x1_change
+        y1 += y1_change
+        dis.fill(blue)
+        
+        # 绘制食物
+        pygame.draw.rect(dis, food_color, [foodx, foody, snake_block, snake_block])
+        
+        # 绘制障碍物
+        for obstacle in obstacles:
+            pygame.draw.rect(dis, red, [obstacle[0], obstacle[1], snake_block, snake_block])
+        
+        # 更新蛇身
+        snake_Head = []
+        snake_Head.append(x1)
+        snake_Head.append(y1)
+        snake_List.append(snake_Head)
+        
+        # 如果蛇移动，删除尾部
+        if len(snake_List) > Length_of_snake:
+            del snake_List[0]
+
+        # 检查是否撞到自己
+        for x in snake_List[:-1]:
+            if x == snake_Head:
+                game_close = True
+                
+        # 检查是否撞到障碍物
+        for obstacle in obstacles:
+            if x1 == obstacle[0] and y1 == obstacle[1]:
+                game_close = True
+
+        # 绘制蛇
+        our_snake(snake_block, snake_List)
+        
+        # 显示分数
+        Your_score(Length_of_snake - 1)
+
+        pygame.display.update()
+
+        # 吃到食物
+        if x1 == foodx and y1 == foody:
+            Length_of_snake += food_points
+            current_food = random.choice(food_types)
+            food_color = current_food["color"]
+            food_points = current_food["points"]
+            foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+            foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+            
+            # 随着分数增加，添加障碍物
+            if Length_of_snake % 3 == 0 and random.random() < 0.3:
+                ox = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
+                oy = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
+                obstacles.append([ox, oy])
+
+        # 根据分数调整难度
+        if Length_of_snake > 5:
+            snake_speed = 20
+        if Length_of_snake > 10:
+            snake_speed = 25
+        if Length_of_snake > 15:
+            snake_speed = 30
+
+        clock.tick(snake_speed)
+
+    pygame.quit()
+    quit()
+
+# 启动游戏
+gameLoop()`}
+</CodeBlock>
+
+## 8. 总结
+
+通过以上步骤，我们成功创建了一个功能完整的贪吃蛇游戏。主要学习了：
+
+1. **Pygame 基础**：初始化、窗口设置、事件处理
+2. **游戏对象设计**：蛇、食物、障碍物的表示和绘制
+3. **游戏逻辑**：碰撞检测、状态更新、难度调整
+4. **用户界面**：开始菜单、暂停功能、分数显示
+5. **功能扩展**：不同类型的食物、障碍物、难度级别
+
+这个游戏可以进一步改进，例如添加音效、保存高分记录、添加更多游戏模式等。Pygame 提供了丰富的功能，可以帮助你创建更复杂、更有趣的游戏。
+
+希望这个指南对你有所帮助，祝你游戏开发愉快！
+
