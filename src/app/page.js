@@ -187,13 +187,8 @@ export default function Home() {
                     : "text-gray-600 group-hover:text-gray-700"
                   }`}
                 >掌握 Python 基础语法、数据类型、流程控制和函数编写等核心概念</p>
-                <div 
-                  ref={addToButtonsRef}
-                  className={`font-medium inline-flex items-center group-hover:translate-x-1 transition-transform
-                    ${darkMode 
-                      ? "text-blue-400 hover:text-blue-300" 
-                      : "text-blue-600 hover:text-blue-700"
-                    }`}
+                <div
+                  className={`font-medium inline-flex items-center ${darkMode ? "text-blue-400" : "text-blue-600"}`}
                 >
                   开始学习
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
@@ -236,13 +231,8 @@ export default function Home() {
                     : "text-gray-600 group-hover:text-gray-700"
                   }`}
                 >通过实际项目学习，如网络爬虫、自动化脚本、Web 应用开发等</p>
-                <div 
-                  ref={addToButtonsRef}
-                  className={`font-medium inline-flex items-center group-hover:translate-x-1 transition-transform
-                    ${darkMode 
-                      ? "text-emerald-400 hover:text-emerald-300" 
-                      : "text-emerald-600 hover:text-emerald-700"
-                    }`}
+                <div
+                  className={`font-medium inline-flex items-center ${darkMode ? "text-emerald-400" : "text-emerald-600"}`}
                 >
                   查看项目
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
@@ -285,13 +275,8 @@ export default function Home() {
                     : "text-gray-600 group-hover:text-gray-700"
                   }`}
                 >学习数据分析、可视化、机器学习和人工智能的 Python 应用</p>
-                <div 
-                  ref={addToButtonsRef}
-                  className={`font-medium inline-flex items-center group-hover:translate-x-1 transition-transform
-                    ${darkMode 
-                      ? "text-purple-400 hover:text-purple-300" 
-                      : "text-purple-600 hover:text-purple-700"
-                    }`}
+                <div
+                  className={`font-medium inline-flex items-center ${darkMode ? "text-purple-400" : "text-purple-600"}`}
                 >
                   探索数据
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
@@ -396,7 +381,7 @@ export default function Home() {
             rel="noopener noreferrer"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 00-1.414-1.414L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
             下载 Python
           </a>

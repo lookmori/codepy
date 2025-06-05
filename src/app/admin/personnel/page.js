@@ -4,13 +4,15 @@ import Loading from '@/components/Loading';
 import Error from '@/components/Error';
 import Button from '@/components/Button';
 import Modal from '@/components/Modal';
+import ConfirmModal from '@/components/ConfirmModal';
 import { useToast } from '@/components/Toast';
 import { fetchWithThrow } from '@/lib/fetchWithThrow';
 import { Suspense } from 'react';
 import PageLoading from '@/app/loading';
+import Link from 'next/link';
 
 // Placeholder component for user list (will be implemented later)
-function UserList({ role, userRole, page, limit, onPageChange, refreshKey, search }) {
+function UserList({ role, userRole, page, limit, onPageChange, refreshKey, search, onDeleteUser }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -56,15 +58,40 @@ function UserList({ role, userRole, page, limit, onPageChange, refreshKey, searc
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">邮箱</th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">角色</th>
             {/* Add more headers if needed */}
+            {userRole !== 'STUDENT' && ( // Only show actions column for ADMIN or TEACHER
+              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">操作</th>
+            )}
           </tr>
         </thead>
         <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
           {filteredUsers.map(user => (
             <tr key={user.id}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{user.username}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                {/* Make username clickable */}
+                {user.role === 'STUDENT' ? (
+                  <Link href={`/admin/personnel/student/${user.id}`} className="text-blue-600 hover:underline dark:text-blue-400">
+                    {user.username}
+                  </Link>
+                ) : (
+                  user.username
+                )}
+              </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.email}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{user.role}</td>
               {/* Add more data cells */}
+              {userRole !== 'STUDENT' && ( // Only show actions for ADMIN or TEACHER
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">
+                  {/* Add Edit/Delete buttons here */}
+                  <Button
+                    onClick={() => onDeleteUser(user.id, user.username, user.role)}
+                    variant="danger"
+                    size="sm"
+                    className="ml-2"
+                  >
+                    删除
+                  </Button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -134,6 +161,10 @@ function PersonnelPageContent() {
 
   const [searchStudent, setSearchStudent] = useState('');
   const [searchTeacher, setSearchTeacher] = useState('');
+
+  // State for delete confirmation modal
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   // Function to handle opening the modal
   const handleOpenAddModal = (role) => {
@@ -245,6 +276,53 @@ function PersonnelPageContent() {
     }
   };
 
+  // Function to handle user deletion button click
+  const onDeleteUser = (userId, username, role) => {
+    setUserToDelete({ id: userId, username, role });
+    setShowDeleteConfirmModal(true);
+  };
+
+  // Function to handle confirmation of deletion in the modal
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
+
+    setIsAdding(true); // Use the same loading state for now
+    setShowDeleteConfirmModal(false); // Close the modal
+
+    try {
+      await fetchWithThrow(`/api/admin/users/delete/${userToDelete.id}`, {
+        method: 'DELETE',
+      });
+      addToast({
+        title: '删除成功',
+        message: `${userToDelete.role === 'STUDENT' ? '学生' : '教师'} ${userToDelete.username} 已成功删除！`,
+        type: 'success',
+      });
+      // Refresh the appropriate list
+      if (userToDelete.role === 'STUDENT') {
+        setStudentRefreshKey(k => k + 1);
+      } else {
+        setTeacherRefreshKey(k => k + 1);
+      }
+    } catch (err) {
+      console.error('删除用户错误:', err);
+      addToast({
+        title: '删除失败',
+        message: `删除用户 ${userToDelete.username} 失败: ${err.message}`,
+        type: 'danger',
+      });
+    } finally {
+      setIsAdding(false);
+      setUserToDelete(null); // Clear user to delete state
+    }
+  };
+
+  // Function to handle closing the delete confirmation modal
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmModal(false);
+    setUserToDelete(null);
+  };
+
   useEffect(() => {
     const user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : null;
     setCurrentUser(user);
@@ -320,6 +398,7 @@ function PersonnelPageContent() {
               onPageChange={setStudentPage}
               refreshKey={studentRefreshKey}
               search={searchStudent}
+              onDeleteUser={onDeleteUser}
             />
           </div>
         )}
@@ -350,6 +429,7 @@ function PersonnelPageContent() {
               onPageChange={setTeacherPage}
               refreshKey={teacherRefreshKey}
               search={searchTeacher}
+              onDeleteUser={onDeleteUser}
             />
           </div>
         )}
@@ -406,6 +486,17 @@ function PersonnelPageContent() {
           </div>
         </form>
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteConfirmModal}
+        onClose={handleCancelDelete}
+        title="确认删除用户"
+        message={`确定要删除用户 "${userToDelete?.username}" (${userToDelete?.role === 'STUDENT' ? '学生' : '教师'}) 吗？此操作不可逆！`}
+        onConfirm={handleConfirmDelete}
+        confirmText="确定删除"
+        cancelText="取消"
+      />
     </div>
   );
 }
