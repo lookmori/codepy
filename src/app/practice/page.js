@@ -22,7 +22,7 @@ function PracticeContent() {
   const [exercisesPerPage] = useState(6);
   const [showModal, setShowModal] = useState(false);
   const [workflowContent, setWorkflowContent] = useState('');
-  const [isAdmin, setIsAdmin] = useState(true); // 临时设为true以展示功能，实际应基于用户角色
+  const [isAdmin, setIsAdmin] = useState(false); // 临时设为true以展示功能，实际应基于用户角色
   const [accessToken, setAccessToken] = useState(null);
   const [pendingWorkflow, setPendingWorkflow] = useState(null);
   const [workflowResult, setWorkflowResult] = useState([]);
@@ -225,7 +225,7 @@ function PracticeContent() {
     const checkAdmin = () => {
       try {
         const user = JSON.parse(localStorage.getItem('user'));
-        setIsAdmin(user?.isAdmin || true);
+        setIsAdmin(user?.isAdmin || false);
       } catch (error) {
         setIsAdmin(false);
       }
