@@ -8,11 +8,8 @@ import { initializeTheme, toggleTheme } from "@/utils/theme-helper";
 // Import theme fix (it self-executes)
 import "@/utils/theme-fix";
 import { ToastProvider } from "@/components/Toast";
-import { StagewiseToolbar } from '@stagewise/toolbar-next';
 
-const stagewiseConfig = {
-  plugins: []
-};
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -111,9 +108,6 @@ export default function RootLayout({ children }) {
           : 'bg-white text-gray-900'} theme-transition-bg theme-transition-text`}>
         <ToastProvider>
           <Navbar />
-          {process.env.NODE_ENV === 'development' && (
-          <StagewiseToolbar config={stagewiseConfig} />
-        )}
           {children}
         </ToastProvider>
       </body>

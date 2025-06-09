@@ -6,6 +6,12 @@ import Link from 'next/link';
 import { getCurrentTheme } from "@/utils/theme-helper";
 import Typewriter from 'typewriter-effect';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+// 使用动态导入确保客服组件只在客户端渲染
+const CustomerService = dynamic(() => import('@/components/CustomerService'), {
+  ssr: false,
+});
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -96,6 +102,9 @@ export default function Home() {
           />
         </div>
       </div>
+      
+      {/* 添加在线客服组件 */}
+      <CustomerService />
       
       <main className="flex-1 flex flex-col items-center justify-center p-6 md:p-16 relative z-10">
         <div className="flex items-center justify-center gap-6 mb-8" ref={logoRef}>
