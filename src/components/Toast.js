@@ -84,7 +84,7 @@ function ToastItem({ id, type = 'info', title, message, duration = 5000, onClose
   );
 }
 
-// Toast容器组件
+// 导出Toast容器组件
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
@@ -101,6 +101,24 @@ export function ToastProvider({ children }) {
   const clearToasts = () => {
     setToasts([]);
   };
+
+  // 添加全局事件监听
+  useEffect(() => {
+    // 处理全局Toast事件
+    const handleGlobalToast = (event) => {
+      if (event.detail) {
+        addToast(event.detail);
+      }
+    };
+
+    // 监听自定义show-toast事件
+    window.addEventListener('show-toast', handleGlobalToast);
+
+    // 清理函数
+    return () => {
+      window.removeEventListener('show-toast', handleGlobalToast);
+    };
+  }, []);
 
   return (
     <ToastContext.Provider value={{ addToast, removeToast, clearToasts }}>
