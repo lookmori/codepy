@@ -1,20 +1,43 @@
 'use client';
 
 import { useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 // 创建自定义事件
-const routeChangeStart = new Event('routeChangeStart');
-const routeChangeComplete = new Event('routeChangeComplete');
+const createCustomEvent = (name) => {
+  try {
+    return new Event(name);
+  } catch (e) {
+    // 兼容性处理
+    const event = document.createEvent('Event');
+    event.initEvent(name, true, true);
+    return event;
+  }
+};
+
+const routeChangeStart = createCustomEvent('routeChangeStart');
+const routeChangeComplete = createCustomEvent('routeChangeComplete');
 
 // 全局状态，标记当前是否正在路由变化中
 let isChanging = false;
+let previousPath = null;
 
 export function RouterEventProvider({ children }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   
   useEffect(() => {
+    // 初始加载不触发
+    if (previousPath === null) {
+      previousPath = pathname;
+      return;
+    }
+    
+    // 路径没变化不触发
+    if (previousPath === pathname) return;
+    
+    // 更新上一个路径
+    previousPath = pathname;
+    
     // 如果已经在变化中，忽略
     if (isChanging) return;
     
@@ -29,7 +52,7 @@ export function RouterEventProvider({ children }) {
     }, 100);
     
     return () => clearTimeout(timer);
-  }, [pathname, searchParams]);
+  }, [pathname]);
   
   return children;
 }

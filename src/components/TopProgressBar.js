@@ -12,6 +12,7 @@ export default function TopProgressBar() {
     
     // 路由开始变化时的处理
     const handleRouteChangeStart = () => {
+      console.log('路由开始变化，显示进度条');
       // 重置状态
       setLoading(true);
       setOpacity(1);
@@ -28,6 +29,7 @@ export default function TopProgressBar() {
     
     // 路由完成变化时的处理
     const handleRouteChangeComplete = () => {
+      console.log('路由变化完成，隐藏进度条');
       // 清除定时器
       if (interval) clearInterval(interval);
       
