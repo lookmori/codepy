@@ -177,3 +177,26 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(59, 130, 246, 0.7);
 }
+
+/* 页面加载进度条动画 */
+@keyframes progress-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+}
+
+.progress-bar-glow {
+  animation: progress-glow 1.5s ease-in-out infinite;
+}
+
+/* 进度条在暗黑模式下的样式 */
+.dark .progress-bar {
+  background-color: #60a5fa;
+  box-shadow: 0 0 15px rgba(96, 165, 250, 0.7);
+}

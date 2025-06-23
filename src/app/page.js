@@ -13,6 +13,31 @@ const CustomerService = dynamic(() => import('@/components/CustomerService'), {
   ssr: false,
 });
 
+// 页面底部添加这个函数
+const TestProgressBar = () => {
+  const handleClick = () => {
+    // 触发进度条启动
+    window.dispatchEvent(new Event('routeChangeStart'));
+    
+    // 2秒后触发进度条完成
+    setTimeout(() => {
+      window.dispatchEvent(new Event('routeChangeComplete'));
+    }, 2000);
+  };
+  
+  return (
+    <div className="fixed bottom-4 right-4 z-40">
+      <button
+        onClick={handleClick}
+        className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors text-sm shadow-lg opacity-70 hover:opacity-100"
+        title="测试进度条效果"
+      >
+        测试进度条
+      </button>
+    </div>
+  );
+};
+
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -462,6 +487,9 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      
+      {/* 添加测试按钮 */}
+      {process.env.NODE_ENV === 'development' && <TestProgressBar />}
     </div>
   );
 }

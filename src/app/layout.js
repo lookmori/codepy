@@ -3,11 +3,13 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import TopProgressBar from "@/components/TopProgressBar";
 import { useEffect, useState } from "react";
 import { initializeTheme, toggleTheme } from "@/utils/theme-helper";
 // Import theme fix (it self-executes)
 import "@/utils/theme-fix";
 import { ToastProvider } from "@/components/Toast";
+import { RouterEventProvider } from "@/utils/router-events";
 
 
 const geistSans = Geist({
@@ -106,10 +108,13 @@ export default function RootLayout({ children }) {
         ${darkMode 
           ? 'bg-gray-900 text-white' 
           : 'bg-white text-gray-900'} theme-transition-bg theme-transition-text`}>
-        <ToastProvider>
-          <Navbar />
-          {children}
-        </ToastProvider>
+        <RouterEventProvider>
+          <ToastProvider>
+            <TopProgressBar />
+            <Navbar />
+            {children}
+          </ToastProvider>
+        </RouterEventProvider>
       </body>
     </html>
   );
