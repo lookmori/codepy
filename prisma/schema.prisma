@@ -82,3 +82,60 @@ model Comment {
 
   @@map("Comment")
 }
+
+model Exam {
+  id           String     @id @default(uuid())
+  name         String
+  description  String?
+  category     String?
+  difficulty   String?
+  duration     Int        // 考试时长（分钟）
+  totalScore   Int        // 总分
+  passingScore Int        // 及格分
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  
+  // 关联题目
+  questions    Question[]
+  submissions  ExamSubmission[]
+
+  @@map("Exam")
+}
+
+model Question {
+  id          String   @id @default(uuid())
+  examId      String
+  title       String
+  content     String
+  type        String   // 题目类型：SINGLE_CHOICE, MULTIPLE_CHOICE, TRUE_FALSE, FILL_BLANK, ESSAY
+  score       Int      // 题目分值
+  options     Json?    // 选择题选项（JSON格式）
+  answer      String   // 正确答案
+  explanation String?  // 答案解析
+  orderIndex  Int      // 题目顺序
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // 关联试卷
+  exam        Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@map("Question")
+}
+
+model ExamSubmission {
+  id            String   @id @default(uuid())
+  examId        String
+  studentId     String   // 学生ID
+  answers       Json     // 学生答案（JSON格式）
+  score         Int?     // 总分
+  maxScore      Int      // 满分
+  submittedAt   DateTime @default(now()) @map("submitted_at")
+  timeUsed      Int      // 用时（秒）
+  tabSwitchCount Int     @default(0) // 切屏次数
+  
+  // 关联试卷
+  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  
+  @@unique([examId, studentId]) // 每个学生每个试卷只能有一条记录
+  @@map("ExamSubmission")
+}

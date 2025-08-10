@@ -4,35 +4,14 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import { useToast } from '@/components/Toast';
-import { fetchWithThrow } from '@/lib/fetchWithThrow';
+
 
 const COZE_CLIENT_ID = process.env.NEXT_PUBLIC_GEN_EXAM_COZE_CLIENT_ID || '90242169603687806132942397704438.app.coze';
 const COZE_REDIRECT_URI = process.env.NEXT_PUBLIC_GEN_EXAM_REDIRECT_URI || 'https://www.code.lookmori.cn/exam';
 const COZE_AUTH_URL = `https://www.coze.cn/api/permission/oauth2/authorize?response_type=code&client_id=${COZE_CLIENT_ID}&redirect_uri=${encodeURIComponent(COZE_REDIRECT_URI)}&state=exam`;
 const COZE_WORKFLOW_ID = process.env.NEXT_PUBLIC_GEN_EXAM_WORKFLOW_ID || '7487949711161442367'; // 使用考试专用的工作流ID
 
-const fakeExams = [
-  { id: 1, name: 'Python初级考试', category: '编程语言', score: 95 },
-  { id: 2, name: '英语四级模拟卷', category: '语言', score: 88 },
-  { id: 3, name: '数学建模基础', category: '数学', score: 76 },
-  { id: 4, name: '计算机组成原理', category: '计算机科学', score: 91 },
-  { id: 5, name: '数据结构与算法', category: '计算机科学', score: 85 },
-  { id: 6, name: '操作系统概论', category: '计算机科学', score: 79 },
-  { id: 7, name: '线性代数', category: '数学', score: 92 },
-  { id: 8, name: '大学物理', category: '物理', score: 80 },
-  { id: 9, name: '概率论与数理统计', category: '数学', score: 87 },
-  { id: 10, name: 'C++程序设计', category: '编程语言', score: 94 },
-  { id: 11, name: 'Java编程入门', category: '编程语言', score: 89 },
-  { id: 12, name: '离散数学', category: '数学', score: 78 },
-  { id: 13, name: '软件工程导论', category: '计算机科学', score: 83 },
-  { id: 14, name: '毛泽东思想概论', category: '政治', score: 98 },
-  { id: 15, name: '大学语文', category: '语言', score: 75 },
-  { id: 16, name: '高等数学', category: '数学', score: 90 },
-  { id: 17, name: '算法设计与分析', category: '计算机科学', score: 93 },
-  { id: 18, name: '编译原理', category: '计算机科学', score: 81 },
-  { id: 19, name: '数据库系统概论', category: '计算机科学', score: 86 },
-  { id: 20, name: '面向对象程序设计', category: '编程语言', score: 96 },
-];
+
 
 export default function ExamPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,29 +27,20 @@ export default function ExamPage() {
   const [importing, setImporting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [shouldAutoExecute, setShouldAutoExecute] = useState(false);
-  const [exams, setExams] = useState(fakeExams);
+  const [exams, setExams] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  
+  const [deletingExamId, setDeletingExamId] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [examToDelete, setExamToDelete] = useState(null);
+
   // 添加请求标记ref，防止重复请求
   const tokenRequestSentRef = useRef(false);
 
   const { addToast } = useToast();
 
-  // 根据搜索词过滤试卷
-  const filteredExams = useMemo(() => {
-    return exams.filter(exam =>
-      exam.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      exam.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm, exams]);
-
-  // 计算当前页的试卷
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentExams = filteredExams.slice(indexOfFirstItem, indexOfLastItem);
-
-  // 计算总页数
-  const totalPages = Math.ceil(filteredExams.length / itemsPerPage);
+  // 总页数从服务端获取
+  const [totalPages, setTotalPages] = useState(1);
 
   // 改变页码
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -85,19 +55,72 @@ export default function ExamPage() {
     }
   }, []);
 
+  // 加载试卷数据
+  const loadExams = async (page = 1, search = '') => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: itemsPerPage.toString(),
+        ...(search && { search })
+      });
+
+      const response = await fetch(`/api/exams?${params}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setExams(data.exams);
+        setTotalPages(data.pagination.totalPages);
+      } else {
+        addToast({
+          title: '加载失败',
+          message: '无法加载试卷列表',
+          type: 'danger',
+        });
+      }
+    } catch (error) {
+      console.error('加载试卷失败:', error);
+      addToast({
+        title: '加载失败',
+        message: '网络错误，请稍后重试',
+        type: 'danger',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 初始加载试卷数据
+  useEffect(() => {
+    loadExams(currentPage, searchTerm);
+  }, [currentPage, itemsPerPage]);
+
+  // 搜索防抖处理
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (currentPage === 1) {
+        loadExams(1, searchTerm);
+      } else {
+        setCurrentPage(1); // 重置到第一页，会触发上面的 useEffect
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
+
   // 检查URL code参数，自动换取access_token
   useEffect(() => {
     const url = new URL(window.location.href);
     const code = url.searchParams.get('code');
-    
+
     // 如果已经发送过请求，或者没有code参数，或者已经有token，则不再发送请求
     if (tokenRequestSentRef.current || !code || accessToken) {
       return;
     }
-    
+
     // 标记已发送请求
     tokenRequestSentRef.current = true;
-    
+
     fetch('/api/coze-oauth-token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -182,6 +205,8 @@ export default function ExamPage() {
     }
     setGenerating(true);
     try {
+      console.log(accessToken, 'accessToken')
+
       const res = await fetch('https://api.coze.cn/v1/workflow/run', {
         method: 'POST',
         headers: {
@@ -214,7 +239,7 @@ export default function ExamPage() {
         setGenerating(false);
         return;
       }
-      
+
       // 处理返回的数据
       if (data.data) {
         try {
@@ -222,7 +247,7 @@ export default function ExamPage() {
           console.log('Coze工作流 data.data 字符串:', data.data);
           const parsedData = typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
           console.log('Coze工作流 data.data 解析后:', parsedData);
-          
+
           // 创建试卷数据结构
           const examData = {
             name: `Python编程考试 ${new Date().toLocaleDateString()}`,
@@ -234,7 +259,7 @@ export default function ExamPage() {
             passingScore: 60,
             questions: []
           };
-          
+
           // 处理编程题
           if (parsedData.bian && Array.isArray(parsedData.bian)) {
             parsedData.bian.forEach((item, index) => {
@@ -253,7 +278,7 @@ export default function ExamPage() {
               });
             });
           }
-          
+
           // 处理判断题
           if (parsedData.pan && Array.isArray(parsedData.pan)) {
             parsedData.pan.forEach((item, index) => {
@@ -269,7 +294,7 @@ export default function ExamPage() {
               });
             });
           }
-          
+
           // 处理选择题
           if (parsedData.xuan && Array.isArray(parsedData.xuan)) {
             parsedData.xuan.forEach((item, index) => {
@@ -278,7 +303,7 @@ export default function ExamPage() {
                 const match = opt.match(/[A-D]:\s*"?([^"]*)"?/);
                 return match ? match[1] : opt;
               });
-              
+
               examData.questions.push({
                 title: `选择题 ${index + 1}`,
                 content: item.problem,
@@ -291,7 +316,7 @@ export default function ExamPage() {
               });
             });
           }
-          
+
           // 设置试卷结果
           setExamResult([examData]);
           setShowResultModal(true);
@@ -357,13 +382,7 @@ export default function ExamPage() {
       setShowResultModal(false);
       setExamResult([]);
       // 导入成功后刷新试卷列表
-      fetchWithThrow('/api/exams')
-        .then(data => {
-          setExams(data.exams || fakeExams);
-        })
-        .catch(err => {
-          console.error('获取试卷失败:', err);
-        });
+      loadExams(currentPage, searchTerm);
     } catch (e) {
       addToast({
         title: '导入失败',
@@ -372,6 +391,53 @@ export default function ExamPage() {
       });
     }
     setImporting(false);
+  };
+
+  // 确认删除试卷
+  const confirmDeleteExam = (exam) => {
+    setExamToDelete(exam);
+    setShowDeleteConfirm(true);
+  };
+
+  // 删除试卷
+  const handleDeleteExam = async () => {
+    if (!examToDelete) return;
+
+    setDeletingExamId(examToDelete.id);
+    try {
+      const response = await fetch(`/api/exams/${examToDelete.id}/delete`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        addToast({
+          title: '删除成功',
+          message: data.message,
+          type: 'success',
+        });
+        // 刷新试卷列表
+        loadExams(currentPage, searchTerm);
+      } else {
+        addToast({
+          title: '删除失败',
+          message: data.error || '删除试卷时发生错误',
+          type: 'danger',
+        });
+      }
+    } catch (error) {
+      console.error('删除试卷失败:', error);
+      addToast({
+        title: '删除失败',
+        message: '网络错误，请稍后重试',
+        type: 'danger',
+      });
+    } finally {
+      setDeletingExamId(null);
+      setShowDeleteConfirm(false);
+      setExamToDelete(null);
+    }
   };
 
   return (
@@ -400,70 +466,126 @@ export default function ExamPage() {
 
       {/* 试卷列表 */}
       <div className="bg-white dark:bg-gray-700 shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-          <thead className="bg-gray-50 dark:bg-gray-600">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">试卷名</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">类别</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">分数</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">操作</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
-            {currentExams.map((exam) => (
-              <tr key={exam.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{exam.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{exam.category}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{exam.score}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <Button
-                    href={`/exam/${exam.id}`}
-                    variant="primary"
-                    size="sm"
-                  >
-                    去做试卷
-                  </Button>
-                </td>
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <span className="ml-2 text-gray-600 dark:text-gray-300">加载中...</span>
+          </div>
+        ) : exams.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400">
+              {searchTerm ? '没有找到匹配的试卷' : '暂无试卷数据'}
+            </p>
+          </div>
+        ) : (
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+            <thead className="bg-gray-50 dark:bg-gray-600">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">试卷名</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">类别</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">难度</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">题目数</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">总分</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">时长</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
+              {exams.map((exam) => (
+                <tr key={exam.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900 dark:text-white">{exam.name}</div>
+                    {exam.description && (
+                      <div className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">
+                        {exam.description}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    {exam.category || '未分类'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${exam.difficulty === '简单' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                        exam.difficulty === '中等' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                          exam.difficulty === '困难' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                            'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                      }`}>
+                      {exam.difficulty || '未知'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    {exam.questionCount || 0}题
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    {exam.totalScore}分
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    {exam.duration}分钟
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <Button
+                        href={`/exam/${exam.id}`}
+                        variant="primary"
+                        size="sm"
+                      >
+                        开始考试
+                      </Button>
+                      {isAdmin && (
+                        <Button
+                          onClick={() => confirmDeleteExam(exam)}
+                          variant="danger"
+                          size="sm"
+                          disabled={deletingExamId === exam.id}
+                        >
+                          {deletingExamId === exam.id ? '删除中...' : '删除'}
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* 分页控件 */}
-      <div className="mt-6 flex justify-center">
-        <Button
-          onClick={() => paginate(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 mx-1 rounded-md"
-          variant={currentPage === 1 ? 'secondary' : 'primary'}
-          size="sm"
-        >
-          上一页
-        </Button>
-        
-        {[...Array(totalPages).keys()].map(number => (
+      {!loading && exams.length > 0 && totalPages > 1 && (
+        <div className="mt-6 flex justify-center">
           <Button
-            key={number + 1}
-            onClick={() => paginate(number + 1)}
+            onClick={() => paginate(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
             className="px-4 py-2 mx-1 rounded-md"
-            variant={currentPage === number + 1 ? 'primary' : 'secondary'}
+            variant={currentPage === 1 ? 'secondary' : 'primary'}
             size="sm"
           >
-            {number + 1}
+            上一页
           </Button>
-        ))}
-        
-        <Button
-          onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 mx-1 rounded-md"
-          variant={currentPage === totalPages ? 'secondary' : 'primary'}
-          size="sm"
-        >
-          下一页
-        </Button>
-      </div>
+
+          {[...Array(totalPages).keys()].map(number => (
+            <Button
+              key={number + 1}
+              onClick={() => paginate(number + 1)}
+              className="px-4 py-2 mx-1 rounded-md"
+              variant={currentPage === number + 1 ? 'primary' : 'secondary'}
+              size="sm"
+            >
+              {number + 1}
+            </Button>
+          ))}
+
+          <Button
+            onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 mx-1 rounded-md"
+            variant={currentPage === totalPages ? 'secondary' : 'primary'}
+            size="sm"
+          >
+            下一页
+          </Button>
+        </div>
+      )}
 
       {/* 生成试卷模态框 */}
       {showModal && (
@@ -522,7 +644,7 @@ export default function ExamPage() {
                     删除
                   </Button>
                 </div>
-                
+
                 <div className="mb-4">
                   <p className="text-gray-700 dark:text-gray-300">{exam.description}</p>
                   <div className="mt-2 flex flex-wrap gap-3 text-sm">
@@ -543,11 +665,11 @@ export default function ExamPage() {
                     </span>
                   </div>
                 </div>
-                
+
                 {/* 题目预览 */}
                 <div className="mt-4 border-t pt-4">
                   <h4 className="font-semibold mb-2 text-gray-900 dark:text-white">题目预览 (共{exam.questions.length}题)</h4>
-                  
+
                   <div className="space-y-4 max-h-96 overflow-y-auto p-2">
                     {/* 编程题 */}
                     {exam.questions.filter(q => q.type === 'PROGRAMMING').length > 0 && (
@@ -568,13 +690,13 @@ export default function ExamPage() {
                             )}
                             {q.inputExample && (
                               <div className="mt-1 text-sm">
-                                <span className="font-medium">输入示例:</span> 
+                                <span className="font-medium">输入示例:</span>
                                 <code className="ml-1 px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">{q.inputExample}</code>
                               </div>
                             )}
                             {q.outputExample && (
                               <div className="mt-1 text-sm">
-                                <span className="font-medium">输出示例:</span> 
+                                <span className="font-medium">输出示例:</span>
                                 <code className="ml-1 px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">{q.outputExample}</code>
                               </div>
                             )}
@@ -582,7 +704,7 @@ export default function ExamPage() {
                         ))}
                       </div>
                     )}
-                    
+
                     {/* 判断题 */}
                     {exam.questions.filter(q => q.type === 'TRUE_FALSE').length > 0 && (
                       <div className="mb-4">
@@ -597,7 +719,7 @@ export default function ExamPage() {
                         </div>
                       </div>
                     )}
-                    
+
                     {/* 选择题 */}
                     {exam.questions.filter(q => q.type === 'SINGLE_CHOICE').length > 0 && (
                       <div className="mb-4">
@@ -641,6 +763,58 @@ export default function ExamPage() {
           <div className="text-red-600 dark:text-red-400 mb-4">{errorMsg}</div>
           <div className="flex justify-end">
             <Button onClick={() => setErrorMsg('')} variant="secondary">关闭</Button>
+          </div>
+        </Modal>
+      )}
+
+      {/* 删除确认对话框 */}
+      {showDeleteConfirm && examToDelete && (
+        <Modal
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          title="确认删除试卷"
+        >
+          <div className="mb-6">
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
+              您确定要删除试卷 <strong>"{examToDelete.name}"</strong> 吗？
+            </p>
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                    警告
+                  </h3>
+                  <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>此操作将永久删除该试卷</li>
+                      <li>该试卷下的所有 {examToDelete.questionCount || 0} 道题目也将被删除</li>
+                      <li>此操作不可撤销</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-3">
+            <Button
+              onClick={() => setShowDeleteConfirm(false)}
+              variant="secondary"
+              disabled={deletingExamId === examToDelete.id}
+            >
+              取消
+            </Button>
+            <Button
+              onClick={handleDeleteExam}
+              variant="danger"
+              disabled={deletingExamId === examToDelete.id}
+            >
+              {deletingExamId === examToDelete.id ? '删除中...' : '确认删除'}
+            </Button>
           </div>
         </Modal>
       )}

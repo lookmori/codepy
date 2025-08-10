@@ -11,450 +11,7 @@ loader.config({
     vs: '/monaco/vs' // 假设 public/monaco/vs 目录下有 Monaco Editor 静态资源
   }
 });
-// Provided fake question data
-const questionsData = {
-  "bian": [
-    {
-      "input": "请输入半径：5",
-      "out": "面积=78.54，周长=31.42",
-      "problem": "编写程序计算圆的面积和周长",
-      "require": [
-        "1. 从键盘输入圆的半径（整数）",
-        "2. 使用math库的pi常量进行圆周率计算",
-        "3. 输出格式：面积=xxx.xx，周长=xxx.xx（保留两位小数）",
-        "4. 包含字符串转数值的类型转换",
-        "5. 添加异常处理（非数字输入处理）"
-      ]
-    },
-    {
-      "input": "无",
-      "out": "显示红色正方形图案",
-      "problem": "使用turtle库绘制正方形",
-      "require": [
-        "1. 导入turtle库并创建画布",
-        "2. 控制画笔绘制边长为100的正方形",
-        "3. 实现前进、右转90度、颜色控制",
-        "4. 绘制完成后隐藏画笔",
-        "5. 添加提笔落笔操作控制线条连贯性"
-      ]
-    }
-  ],
-  "pan": [
-    {
-      "0": {
-        "ans": true,
-        "problem": "Python程序默认按顺序执行语句，即从上到下逐行运行代码。"
-      }
-    },
-    {
-      "1": {
-        "ans": false,
-        "problem": "在Python中，变量名可以命名为'print'，因为print是普通标识符。"
-      }
-    },
-    {
-      "2": {
-        "ans": false,
-        "problem": "在IDLE的交互模式下，可以直接运行包含多行循环语句的完整程序。"
-      }
-    },
-    {
-      "3": {
-        "ans": true,
-        "problem": "turtle.left(90)会让海龟逆时针旋转90度。"
-      }
-    },
-    {
-      "4": {
-        "ans": false,
-        "problem": "表达式 int('3.14') 能正确将字符串转换为整数3。"
-      }
-    },
-    {
-      "5": {
-        "ans": true,
-        "problem": "在Python中，'5' + str(2) 的结果是字符串'52'。"
-      }
-    },
-    {
-      "6": {
-        "ans": false,
-        "problem": "turtle.penup()执行后，海龟移动时会在画布上留下轨迹。"
-      }
-    },
-    {
-      "7": {
-        "ans": false,
-        "problem": "在Python中，多行注释必须使用井号(#)在每行开头标注。"
-      }
-    },
-    {
-      "8": {
-        "ans": false,
-        "problem": "逻辑表达式 (5 > 3) and (2 == '2') 的最终结果为True。"
-      }
-    },
-    {
-      "9": {
-        "ans": true,
-        "problem": "turtle.circle(100, 180) 会绘制出一个直径为100像素的半圆形。"
-      }
-    }
-  ],
-  "xuan": [
-    {
-      "0": {
-        "ans": "A",
-        "options": [
-          "A: Ctrl+N",
-          "B: Ctrl+S",
-          "C: Ctrl+O",
-          "D: Alt+F4"
-        ],
-        "problem": "在Python IDLE中，新建文件的快捷键是？"
-      }
-    },
-    {
-      "1": {
-        "ans": "B",
-        "options": [
-          "A: Ctrl+N",
-          "B: Ctrl+S",
-          "C: F5",
-          "D: Alt+F4"
-        ],
-        "problem": "在Python IDLE中，保存文件的快捷键是？"
-      }
-    },
-    {
-      "2": {
-        "ans": "A",
-        "options": [
-          "A: Python Shell窗口",
-          "B: 编辑窗口",
-          "C: 调试窗口",
-          "D: 新建的文件窗口"
-        ],
-        "problem": "在Python IDLE中运行程序后，输出结果显示在哪里？"
-      }
-    },
-    {
-      "3": {
-        "ans": "C",
-        "options": [
-          "A: Python 1.0",
-          "B: Python 2.7",
-          "C: Python 3.x",
-          "D: Python 4.0"
-        ],
-        "problem": "Python目前最常用的版本是？"
-      }
-    },
-    {
-      "4": {
-        "ans": "A",
-        "options": [
-          "A: 启动IDLE时自动打开",
-          "B: 在编辑窗口按F5",
-          "C: 菜单栏选择File→New",
-          "D: 快捷键Ctrl+Shift+N"
-        ],
-        "problem": "如何进入Python IDLE的交互模式？"
-      }
-    },
-    {
-      "5": {
-        "ans": "C",
-        "options": [
-          "A: 2var",
-          "B: var!",
-          "C: _var",
-          "D: for"
-        ],
-        "problem": "下列哪个是合法的Python变量名？"
-      }
-    },
-    {
-      "6": {
-        "ans": "C",
-        "options": [
-          "A: if",
-          "B: while",
-          "C: hello",
-          "D: for"
-        ],
-        "problem": "以下哪个不是Python的保留字？"
-      }
-    },
-    {
-      "7": {
-        "ans": "D",
-        "options": [
-          "A: 单引号",
-          "B: 双引号",
-          "C: 三引号",
-          "D: 以上都可以"
-        ],
-        "problem": "在Python中，字符串可以用什么符号表示？"
-      }
-    },
-    {
-      "8": {
-        "ans": "C",
-        "options": [
-          "A: int()",
-          "B: float()",
-          "C: str()",
-          "D: chr()"
-        ],
-        "problem": "将整数转换为字符串的函数是？"
-      }
-    },
-    {
-      "9": {
-        "ans": "B",
-        "options": [
-          "A: 35",
-          "B: 23",
-          "C: 20",
-          "D: 19"
-        ],
-        "problem": "表达式 3 + 4 * 5 的结果是？"
-      }
-    },
-    {
-      "10": {
-        "ans": "B",
-        "options": [
-          "A: 5 > 10",
-          "B: 3 == 3",
-          "C: 7 < 2",
-          "D: 4 != 4"
-        ],
-        "problem": "以下哪个比较表达式的结果为True？"
-      }
-    },
-    {
-      "11": {
-        "ans": "B",
-        "options": [
-          "A: True",
-          "B: False",
-          "C: 5",
-          "D: 4"
-        ],
-        "problem": "表达式 (5>3) and (4<2) 的结果是？"
-      }
-    },
-    {
-      "12": {
-        "ans": "C",
-        "options": [
-          "A: 整数",
-          "B: 浮点数",
-          "C: 字符串",
-          "D: 布尔值"
-        ],
-        "problem": "input()函数默认返回的数据类型是？"
-      }
-    },
-    {
-      "13": {
-        "ans": "C",
-        "options": [
-          "A: 7",
-          "B: \"7\"",
-          "C: \"34\"",
-          "D: 34"
-        ],
-        "problem": "print(\"3\" + \"4\") 的输出结果是什么？"
-      }
-    },
-    {
-      "14": {
-        "ans": "A",
-        "options": [
-          "A: 1",
-          "B: 0",
-          "C: 3",
-          "D: 10"
-        ],
-        "problem": "表达式 10 % 3 的结果是？"
-      }
-    },
-    {
-      "15": {
-        "ans": "B",
-        "options": [
-          "A: 8",
-          "B: 15",
-          "C: 53",
-          "D: 35"
-        ],
-        "problem": "a = 5; b = 3; c = a * b; print(c) 的输出是？"
-      }
-    },
-    {
-      "16": {
-        "ans": "B",
-        "options": [
-          "A: A",
-          "B: B",
-          "C: 10",
-          "D: 20"
-        ],
-        "problem": "a = 10; b = 20; if a > b: print(\"A\") else: print(\"B\") 的输出是？"
-      }
-    },
-    {
-      "17": {
-        "ans": "B",
-        "options": [
-          "A: 3.0",
-          "B: 3",
-          "C: 15",
-          "D: 5"
-        ],
-        "problem": "x = 15; y = 5; z = x / y; print(int(z)) 的输出是？"
-      }
-    },
-    {
-      "18": {
-        "ans": "B",
-        "options": [
-          "A: 30",
-          "B: \"1020\"",
-          "C: 1020",
-          "D: \"30\""
-        ],
-        "problem": "a = \"10\"; b = \"20\"; print(a + b) 的输出是？"
-      }
-    },
-    {
-      "19": {
-        "ans": "B",
-        "options": [
-          "A: 10",
-          "B: 20",
-          "C: 30",
-          "D: 40"
-        ],
-        "problem": "a = 10; b = 20; c = a + b; a = c - a; print(a) 的输出是？"
-      }
-    },
-    {
-      "20": {
-        "ans": "A",
-        "options": [
-          "A: import turtle",
-          "B: import turtle*",
-          "C: include turtle",
-          "D: load turtle"
-        ],
-        "problem": "正确导入turtle库的语句是？"
-      }
-    },
-    {
-      "21": {
-        "ans": "A",
-        "options": [
-          "A: turtle.forward(100)",
-          "B: turtle.backward(100)",
-          "C: turtle.left(100)",
-          "D: turtle.right(100)"
-        ],
-        "problem": "控制海龟向前移动100像素的命令是？"
-      }
-    },
-    {
-      "22": {
-        "ans": "A",
-        "options": [
-          "A: turtle.color(\"red\")",
-          "B: turtle.setcolor(\"red\")",
-          "C: turtle.pencolor(\"red\")",
-          "D: turtle.colour(\"red\")"
-        ],
-        "problem": "设置画笔颜色为红色的命令是？"
-      }
-    },
-    {
-      "23": {
-        "ans": "B",
-        "options": [
-          "A: turtle.circle()",
-          "B: turtle.circle(50)",
-          "C: turtle.draw_circle(50)",
-          "D: turtle.oval(50)"
-        ],
-        "problem": "画一个半径为50的圆的命令是？"
-      }
-    },
-    {
-      "24": {
-        "ans": "A",
-        "options": [
-          "A: turtle.penup()",
-          "B: turtle.pendown()",
-          "C: turtle.up()",
-          "D: turtle.down()"
-        ],
-        "problem": "抬起画笔停止绘图的命令是？"
-      }
-    }
-  ]
-};
 
-// Helper to flatten the question data and assign unique IDs
-const flattenQuestions = (data) => {
-  let idCounter = 0;
-  const flattened = [];
-
-  // Process 'xuan' (multiple choice) questions
-  data.xuan.forEach(item => {
-    const key = Object.keys(item)[0];
-    const q = item[key];
-    flattened.push({
-      id: `q_${idCounter++}`,
-      type: 'xuan',
-      problem: q.problem,
-      options: q.options,
-      ans: q.ans,
-      completed: false, // Simulate completed status
-    });
-  });
-
-  // Process 'pan' (true/false) questions
-  data.pan.forEach(item => {
-    const key = Object.keys(item)[0];
-    const q = item[key];
-    flattened.push({
-      id: `q_${idCounter++}`,
-      type: 'pan',
-      problem: q.problem,
-      ans: q.ans,
-      completed: false, // Simulate completed status
-    });
-  });
-
-  // Process 'bian' (coding) questions
-  data.bian.forEach(q => {
-    flattened.push({
-      id: `q_${idCounter++}`,
-      type: 'bian',
-      problem: q.problem,
-      input: q.input,
-      out: q.out,
-      require: q.require,
-      completed: false, // Simulate completed status
-    });
-  });
-
-  return flattened;
-};
-
-// Initial state based on flattened questions, all marked as incomplete initially
-const initialQuestions = flattenQuestions(questionsData);
 
 export default function ExamDetailPage() {
   const params = useParams();
@@ -463,29 +20,138 @@ export default function ExamDetailPage() {
   const { addToast, removeToast, clearToasts } = useToast();
   const toast = Toast();
 
-  // Manage questions state, including completion status
-  const [questions, setQuestions] = useState(initialQuestions);
-  const [editorTheme, setEditorTheme] = useState('vs-dark'); // 添加编辑器主题状态
-  
-  // 添加倒计时状态
-  const [timeRemaining, setTimeRemaining] = useState(2 * 60 * 60); // 2小时，以秒为单位
+  // 状态管理
+  const [exam, setExam] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editorTheme, setEditorTheme] = useState('vs-dark');
+  const [previousSubmission, setPreviousSubmission] = useState(null);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [showRetakeButton, setShowRetakeButton] = useState(false);
+
+  // 添加倒计时状态 - 从试卷数据中获取时长
+  const [timeRemaining, setTimeRemaining] = useState(0);
   const [tabSwitchCount, setTabSwitchCount] = useState(0); // 切屏计数
   const [isSubmitting, setIsSubmitting] = useState(false); // 提交状态
   const [isSubmitted, setIsSubmitted] = useState(false); // 是否已提交
-  
+
   // 添加确认对话框状态
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [confirmDialogMessage, setConfirmDialogMessage] = useState('');
   const [confirmDialogCallback, setConfirmDialogCallback] = useState(null);
-  
+
   // 用于检测页面可见性变化的引用
   const visibilityRef = useRef(null);
 
-  // For now, display all questions regardless of examId. 
-  // In a real app, you'd filter or fetch questions based on examId.
+  // 加载之前的答题记录
+  const loadPreviousSubmission = async () => {
+    try {
+      const studentId = "student123"; // 这里应该从用户登录信息获取
+      const response = await fetch(`/api/exams/${examId}/submit?studentId=${studentId}`);
+      const data = await response.json();
+
+      if (data.success && data.submission) {
+        setPreviousSubmission(data.submission);
+        setHasSubmitted(true);
+        setShowRetakeButton(true);
+
+        // 回显之前的答案
+        setStudentAnswers(data.submission.answers);
+
+        // 标记已作答的题目为完成状态
+        setQuestions(prev => prev.map(q => ({
+          ...q,
+          completed: data.submission.answers[q.id] !== undefined &&
+            data.submission.answers[q.id] !== null &&
+            data.submission.answers[q.id] !== ''
+        })));
+      }
+    } catch (error) {
+      console.error('加载答题记录失败:', error);
+    }
+  };
+
+  // 加载试卷数据
+  const loadExamData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/exams/${examId}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setExam(data.exam);
+
+        // 转换题目数据格式，添加完成状态，并按类型排序
+        const formattedQuestions = data.exam.questions.map(q => ({
+          id: q.id,
+          type: q.type,
+          title: q.title,
+          content: q.content,
+          problem: q.content, // 兼容原有的 problem 字段
+          score: q.type === 'SINGLE_CHOICE' || q.type === 'TRUE_FALSE' ? 2 : q.score, // 选择题和判断题固定2分
+          options: q.options,
+          answer: q.answer,
+          explanation: q.explanation,
+          orderIndex: q.orderIndex,
+          completed: false,
+          // 根据题目类型添加特定字段
+          ...(q.type === 'PROGRAMMING' && {
+            input: q.options?.inputExample || '',
+            out: q.options?.outputExample || '',
+            require: q.options?.requirements || []
+          }),
+          ...(q.type === 'SINGLE_CHOICE' && {
+            ans: q.answer
+          }),
+          ...(q.type === 'TRUE_FALSE' && {
+            ans: q.answer === '正确' || q.answer === 'true' || q.answer === true
+          })
+        }));
+
+        // 按题目类型排序：选择题 -> 判断题 -> 编程题
+        const sortedQuestions = formattedQuestions.sort((a, b) => {
+          const typeOrder = {
+            'SINGLE_CHOICE': 1,
+            'TRUE_FALSE': 2,
+            'PROGRAMMING': 3
+          };
+          return typeOrder[a.type] - typeOrder[b.type];
+        });
+
+        setQuestions(sortedQuestions);
+
+        // 设置考试时长（转换为秒）
+        setTimeRemaining(data.exam.duration * 60);
+
+        // 设置第一个题目为选中状态
+        if (sortedQuestions.length > 0) {
+          setSelectedQuestionId(sortedQuestions[0].id);
+        }
+
+        // 检查是否有之前的答题记录
+        await loadPreviousSubmission();
+      } else {
+        setError(data.error || '加载试卷失败');
+      }
+    } catch (error) {
+      console.error('加载试卷数据失败:', error);
+      setError('网络错误，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 初始加载数据
+  useEffect(() => {
+    if (examId) {
+      loadExamData();
+    }
+  }, [examId]);
+
   const questionsForExam = questions;
 
-  const [selectedQuestionId, setSelectedQuestionId] = useState(questionsForExam.length > 0 ? questionsForExam[0].id : null);
+  const [selectedQuestionId, setSelectedQuestionId] = useState(null);
   const [studentAnswers, setStudentAnswers] = useState({}); // State to store student answers
 
   const selectedQuestion = useMemo(() => {
@@ -494,8 +160,13 @@ export default function ExamDetailPage() {
 
   // 处理倒计时
   useEffect(() => {
-    if (isSubmitted) return; // 如果已提交，不再倒计时
-    
+    // 只有在以下条件都满足时才开始倒计时：
+    // 1. 未提交
+    // 2. 不在加载中
+    // 3. 时间大于 0
+    // 4. 不是重做模式
+    if (isSubmitted || loading || timeRemaining <= 0 || showRetakeButton) return;
+
     const timer = setInterval(() => {
       setTimeRemaining(prev => {
         if (prev <= 1) {
@@ -508,12 +179,12 @@ export default function ExamDetailPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isSubmitted]);
+  }, [isSubmitted, loading, timeRemaining]);
 
   // 处理页面可见性变化（检测切屏）
   useEffect(() => {
-    if (isSubmitted) return; // 如果已提交，不再检测切屏
-    
+    if (isSubmitted || showRetakeButton) return; // 如果已提交或在重做模式，不再检测切屏
+
     const handleVisibilityChange = () => {
       if (document.hidden) {
         setTabSwitchCount(prev => {
@@ -528,7 +199,7 @@ export default function ExamDetailPage() {
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
@@ -546,7 +217,7 @@ export default function ExamDetailPage() {
   const handleSubmitExam = (reason = 'manual') => {
     // 如果已经提交过，不再重复提交
     if (isSubmitted) return;
-    
+
     // 检查未作答的题目
     if (reason === 'manual') {
       const unansweredQuestions = questions.filter(q => !q.completed);
@@ -561,132 +232,136 @@ export default function ExamDetailPage() {
         return; // 等待用户确认
       }
     }
-    
+
     // 如果没有未作答题目或非手动提交，直接继续
     proceedWithSubmission(reason);
   };
-  
+
+  // 重做试卷
+  const handleRetakeExam = async () => {
+    try {
+      const studentId = "student123"; // 这里应该从用户登录信息获取
+      const response = await fetch(`/api/exams/${examId}/submit?studentId=${studentId}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // 重置所有状态
+        setPreviousSubmission(null);
+        setHasSubmitted(false);
+        setShowRetakeButton(false);
+        setIsSubmitted(false);
+        setStudentAnswers({});
+        setTabSwitchCount(0);
+
+        // 重置题目完成状态
+        setQuestions(prev => prev.map(q => ({ ...q, completed: false })));
+
+        // 重置考试时间
+        setTimeRemaining(exam.duration * 60);
+
+        toast.success({
+          title: '重做试卷',
+          message: '上次答题记录已删除，可以重新开始答题',
+          duration: 3000
+        });
+      }
+    } catch (error) {
+      console.error('删除答题记录失败:', error);
+      toast.error({
+        title: '操作失败',
+        message: '删除答题记录时发生错误',
+        duration: 3000
+      });
+    }
+  };
+
   // 实际执行提交逻辑
-  const proceedWithSubmission = (reason) => {
+  const proceedWithSubmission = async (reason) => {
     setIsSubmitting(true);
-    
-    // 准备提交数据
-    const examData = {
-      examId,
-      studentId: "student123", // 这里可以替换为实际的学生ID
-      submittedAt: new Date().toISOString(),
-      tabSwitchCount,
-      timeUsed: 2 * 60 * 60 - timeRemaining, // 使用的时间（秒）
-      answers: studentAnswers,
-      questions: questions.map(q => ({
-        id: q.id,
-        type: q.type,
-        problem: q.problem,
-        completed: q.completed,
-        correctAnswer: q.ans // 正确答案
-      }))
-    };
-    
-    // 打印到控制台
-    console.log("提交的试卷信息:", examData);
-    
-    // 计算得分（仅供演示）
-    let correctCount = 0;
-    let totalAnswered = 0;
-    
-    // 打印每一题的详细答案信息
-    console.log("\n===== 详细答题情况 =====");
-    questions.forEach((question, index) => {
-      const studentAnswer = studentAnswers[question.id];
-      const isAnswered = studentAnswer !== undefined && studentAnswer !== null && studentAnswer !== '';
-      let isCorrect = false;
-      let answerDisplay = '未作答';
-      
-      if (isAnswered) {
-        totalAnswered++;
-        
-        // 根据题目类型显示不同的答案信息
-        if (question.type === 'xuan') {
-          answerDisplay = `选择了: ${studentAnswer}`;
-          isCorrect = studentAnswer === question.ans;
-          if (isCorrect) correctCount++;
-        } else if (question.type === 'pan') {
-          answerDisplay = studentAnswer ? '选择了: 正确' : '选择了: 错误';
-          isCorrect = studentAnswer === question.ans;
-          if (isCorrect) correctCount++;
-        } else if (question.type === 'bian') {
-          // 编程题显示代码长度
-          answerDisplay = `提交了代码 (${studentAnswer.length} 字符)`;
+
+    try {
+      const studentId = "student123"; // 这里应该从用户登录信息获取
+      const timeUsed = (exam?.duration || 120) * 60 - timeRemaining;
+
+      // 提交到服务器
+      const response = await fetch(`/api/exams/${examId}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentId,
+          answers: studentAnswers,
+          timeUsed,
+          tabSwitchCount
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // 设置为已提交状态
+        setIsSubmitted(true);
+        setHasSubmitted(true);
+        setShowRetakeButton(true);
+        setPreviousSubmission(data.submission);
+
+        // 计算选择题和判断题的统计信息
+        const choiceAndTrueFalseQuestions = questions.filter(q =>
+          q.type === 'SINGLE_CHOICE' || q.type === 'TRUE_FALSE'
+        );
+        const correctAnswers = data.questionResults.filter(r => r.isCorrect).length;
+        const totalAnswered = data.questionResults.filter(r =>
+          r.studentAnswer !== undefined && r.studentAnswer !== null && r.studentAnswer !== ''
+        ).length;
+
+        // 根据不同的提交原因显示不同的提示
+        let toastTitle = '';
+        let toastMessage = '';
+        let toastType = 'success';
+
+        switch (reason) {
+          case 'timeout':
+            toastTitle = '考试时间结束';
+            toastMessage = `考试时间已到，系统已自动提交。得分：${data.submission.score}/${data.submission.maxScore}分`;
+            toastType = 'warning';
+            break;
+          case 'tabswitch':
+            toastTitle = '切屏次数超限';
+            toastMessage = `您已切换页面超过3次，系统已自动提交。得分：${data.submission.score}/${data.submission.maxScore}分`;
+            toastType = 'error';
+            break;
+          default:
+            toastTitle = '试卷提交成功';
+            toastMessage = `您的得分：${data.submission.score}/${data.submission.maxScore}分（选择题和判断题正确${correctAnswers}/${choiceAndTrueFalseQuestions.length}题）`;
+            toastType = 'success';
         }
-      }
-      
-      // 构建题目类型显示
-      let questionTypeDisplay = '';
-      if (question.type === 'xuan') questionTypeDisplay = '【选择题】';
-      else if (question.type === 'pan') questionTypeDisplay = '【判断题】';
-      else if (question.type === 'bian') questionTypeDisplay = '【编程题】';
-      
-      // 打印题目信息和答案
-      console.log(`第 ${index + 1} 题 ${questionTypeDisplay} ${question.problem}`);
-      console.log(`  答案状态: ${answerDisplay}`);
-      
-      // 对于选择题和判断题，显示正确答案和是否正确
-      if (question.type === 'xuan' || question.type === 'pan') {
-        const correctAnswerDisplay = question.type === 'xuan' ? 
-          question.ans : 
-          (question.ans ? '正确' : '错误');
-        console.log(`  正确答案: ${correctAnswerDisplay}`);
-        if (isAnswered) {
-          console.log(`  是否正确: ${isCorrect ? '✓ 正确' : '✗ 错误'}`);
+
+        // 使用Toast组件显示提示信息
+        if (toastType === 'success') {
+          toast.success({ title: toastTitle, message: toastMessage, duration: 5000 });
+        } else if (toastType === 'warning') {
+          toast.warning({ title: toastTitle, message: toastMessage, duration: 5000 });
+        } else if (toastType === 'error') {
+          toast.error({ title: toastTitle, message: toastMessage, duration: 5000 });
         }
+
+        // 打印详细结果到控制台
+        console.log("提交结果:", data);
+      } else {
+        throw new Error(data.error || '提交失败');
       }
-      console.log(''); // 空行分隔
-    });
-    
-    console.log(`\n总结: 共${questions.length}题，已答${totalAnswered}题，选择题和判断题正确${correctCount}题`);
-    
-    // 设置为已提交状态
-    setIsSubmitted(true);
-    
-    // 根据不同的提交原因显示不同的提示
-    let toastTitle = '';
-    let toastMessage = '';
-    let toastType = 'success';
-    
-    switch(reason) {
-      case 'timeout':
-        toastTitle = '考试时间结束';
-        toastMessage = '考试时间已到，系统已自动提交您的答案';
-        toastType = 'warning';
-        break;
-      case 'tabswitch':
-        toastTitle = '切屏次数超限';
-        toastMessage = '您已切换页面超过3次，系统已自动提交您的答案';
-        toastType = 'error';
-        break;
-      default:
-        toastTitle = '试卷提交成功';
-        toastMessage = `您已完成${totalAnswered}道题，选择题和判断题正确${correctCount}道`;
-        toastType = 'success';
-    }
-    
-    // 使用Toast组件显示提示信息
-    if (toastType === 'success') {
-      toast.success({ title: toastTitle, message: toastMessage, duration: 3000 });
-    } else if (toastType === 'warning') {
-      toast.warning({ title: toastTitle, message: toastMessage, duration: 3000 });
-    } else if (toastType === 'error') {
-      toast.error({ title: toastTitle, message: toastMessage, duration: 3000 });
-    } else {
-      toast.info({ title: toastTitle, message: toastMessage, duration: 3000 });
-    }
-    
-    // 模拟提交后的操作
-    setTimeout(() => {
+    } catch (error) {
+      console.error('提交失败:', error);
+      toast.error({
+        title: '提交失败',
+        message: error.message || '网络错误，请稍后重试',
+        duration: 3000
+      });
+      setIsSubmitted(false);
+    } finally {
       setIsSubmitting(false);
-      // 返回上一级
-      router.push('/exam');
-    }, 2000);
+    }
   };
 
   // Function to mark a question as completed
@@ -713,12 +388,12 @@ export default function ExamDetailPage() {
         )
       );
     } else {
-         // Optional: Mark as incomplete if answer is cleared
-         setQuestions(prevQuestions =>
-            prevQuestions.map(q =>
-              q.id === questionId ? { ...q, completed: false } : q
-            )
-          );
+      // Optional: Mark as incomplete if answer is cleared
+      setQuestions(prevQuestions =>
+        prevQuestions.map(q =>
+          q.id === questionId ? { ...q, completed: false } : q
+        )
+      );
     }
   };
 
@@ -726,29 +401,63 @@ export default function ExamDetailPage() {
     <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
       {/* 顶部栏：包含倒计时和切屏计数 */}
       <div className="bg-white dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">考试：{examId}</h1>
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center">
-            <span className="text-gray-600 dark:text-gray-300 mr-2">切屏次数:</span>
-            <span className={`font-bold ${tabSwitchCount >= 2 ? 'text-red-500' : 'text-gray-800 dark:text-white'}`}>
-              {tabSwitchCount}/3
-            </span>
-          </div>
-          <div className="flex items-center">
-            <span className="text-gray-600 dark:text-gray-300 mr-2">剩余时间:</span>
-            <span className={`font-bold ${timeRemaining < 300 ? 'text-red-500' : 'text-gray-800 dark:text-white'}`}>
-              {formatTime(timeRemaining)}
-            </span>
-          </div>
+        <div className="flex items-center">
           <Button
-            onClick={() => handleSubmitExam()}
-            loading={isSubmitting}
-            variant="danger"
-            className="ml-4 w-24 h-10 flex items-center justify-center"
-            disabled={isSubmitting || isSubmitted}
+            onClick={() => router.push('/exam')}
+            variant="secondary"
+            size="sm"
+            className="mr-4 flex items-center"
           >
-            {isSubmitting ? '提交中' : '提交试卷'}
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            返回
           </Button>
+          <div>
+            <h1 className="text-xl font-bold">{exam ? exam.name : `考试：${examId}`}</h1>
+            {previousSubmission && (
+              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                上次得分：{previousSubmission.score}/{previousSubmission.maxScore}分
+                （{new Date(previousSubmission.submittedAt).toLocaleString()}）
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center space-x-4">
+          {!isSubmitted && !showRetakeButton && (
+            <>
+              <div className="flex items-center">
+                <span className="text-gray-600 dark:text-gray-300 mr-2">切屏次数:</span>
+                <span className={`font-bold ${tabSwitchCount >= 2 ? 'text-red-500' : 'text-gray-800 dark:text-white'}`}>
+                  {tabSwitchCount}/3
+                </span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-gray-600 dark:text-gray-300 mr-2">剩余时间:</span>
+                <span className={`font-bold ${timeRemaining < 300 ? 'text-red-500' : 'text-gray-800 dark:text-white'}`}>
+                  {formatTime(timeRemaining)}
+                </span>
+              </div>
+              <Button
+                onClick={() => handleSubmitExam()}
+                loading={isSubmitting}
+                variant="danger"
+                className="w-24 h-10 flex items-center justify-center"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? '提交中' : '提交试卷'}
+              </Button>
+            </>
+          )}
+          {showRetakeButton && (
+            <Button
+              onClick={handleRetakeExam}
+              variant="primary"
+              className="w-24 h-10 flex items-center justify-center"
+            >
+              重做试卷
+            </Button>
+          )}
         </div>
       </div>
 
@@ -756,66 +465,126 @@ export default function ExamDetailPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar / Question Navigation */}
         <div className="w-80 bg-white dark:bg-gray-700 border-r border-gray-200 dark:border-gray-600 p-4 overflow-y-auto flex flex-col">
-          <h2 className="text-xl font-bold mb-4 border-b border-gray-200 dark:border-gray-600 pb-3">题目列表 ({questionsForExam.length})</h2>
-          {/* Legend */}
-          <div className="mb-4 text-sm">
-            <span className="mr-4"><span className="inline-block w-3 h-3 mr-1 rounded-full bg-gray-400"></span> 未作答</span>
-            <span className="mr-4"><span className="inline-block w-3 h-3 mr-1 rounded-full bg-green-500"></span> 已作答</span>
-            <span><span className="inline-block w-3 h-3 mr-1 rounded-full bg-blue-500"></span> 当前题</span>
-          </div>
-          <ul>
-            {/* Question number grid */}
-            <div className="grid grid-cols-5 gap-2">
-              {questionsForExam.map((question, index) => (
-                <button
-                  key={question.id}
-                  className={`w-10 h-10 flex items-center justify-center border rounded text-sm font-semibold
-                    ${selectedQuestionId === question.id ? 'bg-blue-500 text-white border-blue-600' : 
-                      question.completed ? 'bg-green-500 text-white border-green-600' : 
-                      'bg-gray-200 text-gray-800 border-gray-300 dark:bg-gray-600 dark:text-white dark:border-gray-500'}
-                    hover:opacity-80 focus:outline-none`}
-                  onClick={() => setSelectedQuestionId(question.id)}
-                >
-                  {index + 1}
-                </button>
-              ))}
+          <h2 className="text-xl font-bold mb-4 border-b border-gray-200 dark:border-gray-600 pb-3">
+            题目列表 {!loading && `(${questionsForExam.length})`}
+          </h2>
+
+          {loading ? (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+              <span className="ml-2 text-sm">加载中...</span>
             </div>
-          </ul>
+          ) : questionsForExam.length === 0 ? (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              暂无题目
+            </div>
+          ) : showRetakeButton && !isSubmitted ? (
+            <div className="text-center py-8">
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                试卷已完成，点击右上角"重做试卷"按钮可重新答题
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-500">
+                上次得分：{previousSubmission?.score || 0}/{previousSubmission?.maxScore || 0}分
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Legend */}
+              <div className="mb-4 text-sm">
+                <span className="mr-4"><span className="inline-block w-3 h-3 mr-1 rounded-full bg-gray-400"></span> 未作答</span>
+                <span className="mr-4"><span className="inline-block w-3 h-3 mr-1 rounded-full bg-green-500"></span> 已作答</span>
+                <span><span className="inline-block w-3 h-3 mr-1 rounded-full bg-blue-500"></span> 当前题</span>
+              </div>
+              <ul>
+                {/* Question number grid */}
+                <div className="grid grid-cols-5 gap-2">
+                  {questionsForExam.map((question, index) => (
+                    <button
+                      key={question.id}
+                      className={`w-10 h-10 flex items-center justify-center border rounded text-sm font-semibold
+                        ${selectedQuestionId === question.id ? 'bg-blue-500 text-white border-blue-600' :
+                          question.completed ? 'bg-green-500 text-white border-green-600' :
+                            'bg-gray-200 text-gray-800 border-gray-300 dark:bg-gray-600 dark:text-white dark:border-gray-500'}
+                        ${showRetakeButton && !isSubmitted ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-80 cursor-pointer'} focus:outline-none`}
+                      onClick={() => !showRetakeButton && setSelectedQuestionId(question.id)}
+                      disabled={showRetakeButton && !isSubmitted}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                </div>
+              </ul>
+            </>
+          )}
         </div>
 
         {/* Main Content Area */}
         <div className="flex-1 p-6 overflow-y-auto">
-          {selectedQuestion ? (
+          {loading ? (
+            <div className="flex justify-center items-center h-full">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+              <span className="ml-4 text-lg">加载试卷中...</span>
+            </div>
+          ) : error ? (
+            <div className="flex flex-col justify-center items-center h-full">
+              <div className="text-red-500 text-xl mb-4">加载失败</div>
+              <div className="text-gray-600 dark:text-gray-400 mb-4">{error}</div>
+              <Button onClick={loadExamData} variant="primary">重新加载</Button>
+            </div>
+          ) : showRetakeButton && !isSubmitted ? (
+            <div className="flex flex-col justify-center items-center h-full">
+              <div className="text-center">
+                <div className="text-2xl font-bold mb-4">试卷已完成</div>
+                <div className="text-lg mb-6">
+                  您的得分：{previousSubmission?.score || 0}/{previousSubmission?.maxScore || 0}分
+                </div>
+                <div className="text-gray-600 dark:text-gray-400 mb-6">
+                  完成时间：{previousSubmission?.submittedAt ? new Date(previousSubmission.submittedAt).toLocaleString() : ''}
+                </div>
+                <Button onClick={handleRetakeExam} variant="primary" size="lg">
+                  重做试卷
+                </Button>
+              </div>
+            </div>
+          ) : selectedQuestion ? (
             <div>
               {/* Question Type Badge and Count */}
               <div className="flex justify-between items-center mb-4">
-                <span className="bg-blue-500 text-white text-sm font-semibold px-2.5 py-0.5 rounded">{selectedQuestion.type === 'bian' ? '编程题' : selectedQuestion.type === 'pan' ? '判断题' : '选择题'}</span>
-                <span className="text-sm text-gray-600 dark:text-gray-400">第 {questionsForExam.findIndex(q => q.id === selectedQuestionId) + 1} 题 / 共 {questionsForExam.length} 题</span>
+                <span className="bg-blue-500 text-white text-sm font-semibold px-2.5 py-0.5 rounded">
+                  {selectedQuestion.type === 'PROGRAMMING' || selectedQuestion.type === 'bian' ? '编程题' :
+                    selectedQuestion.type === 'TRUE_FALSE' || selectedQuestion.type === 'pan' ? '判断题' : '选择题'}
+                </span>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <span>第 {questionsForExam.findIndex(q => q.id === selectedQuestionId) + 1} 题 / 共 {questionsForExam.length} 题</span>
+                  <span className="ml-4">分值: {selectedQuestion.score}分</span>
+                </div>
               </div>
 
-              <h3 className="text-2xl font-bold mb-4">{selectedQuestion.problem}</h3>
+              <h3 className="text-2xl font-bold mb-4">{selectedQuestion.title || selectedQuestion.problem}</h3>
+              <div className="text-gray-700 dark:text-gray-300 mb-4">{selectedQuestion.content}</div>
               {/* Render question details based on type */}
-              {selectedQuestion.type === 'bian' && (
+              {(selectedQuestion.type === 'PROGRAMMING' || selectedQuestion.type === 'bian') && (
                 <div className="space-y-2">
                   <p><strong>输入:</strong> {selectedQuestion.input}</p>
                   <p><strong>输出:</strong> {selectedQuestion.out}</p>
                   <div>
                     <strong>要求:</strong>
                     <ul className="list-disc list-inside ml-4">
-                      {selectedQuestion.require.map((req, i) => (
+                      {(selectedQuestion.require || []).map((req, i) => (
                         <li key={i}>{req}</li>
                       ))}
                     </ul>
                   </div>
                 </div>
               )}
-              {selectedQuestion.type === 'pan' && (
+              {(selectedQuestion.type === 'TRUE_FALSE' || selectedQuestion.type === 'pan') && (
                 <div className="space-y-4">
                   {/* Options for true/false */}
                   <div className="space-y-2">
                     <div
-                      className="border border-gray-300 dark:border-gray-600 rounded-md p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center"
-                      onClick={() => handleAnswerChange(selectedQuestion.id, true)}
+                      className={`border border-gray-300 dark:border-gray-600 rounded-md p-4 transition-colors flex items-center ${showRetakeButton && !isSubmitted ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                      onClick={() => !(showRetakeButton && !isSubmitted) && handleAnswerChange(selectedQuestion.id, true)}
                     >
                       <input
                         type="radio"
@@ -824,13 +593,16 @@ export default function ExamDetailPage() {
                         className="mr-3 text-blue-600 focus:ring-blue-500 dark:text-blue-500 dark:focus:ring-blue-600"
                         value="true"
                         checked={studentAnswers[selectedQuestion.id] === true}
-                        onChange={() => handleAnswerChange(selectedQuestion.id, true)}
+                        onChange={() => !(showRetakeButton && !isSubmitted) && handleAnswerChange(selectedQuestion.id, true)}
+                        disabled={showRetakeButton && !isSubmitted}
                       />
-                      <label htmlFor={`option-${selectedQuestion.id}-true`} className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200">正确</label>
+                      <label htmlFor={`option-${selectedQuestion.id}-true`} className={`flex-1 text-gray-800 dark:text-gray-200 ${showRetakeButton && !isSubmitted ? 'cursor-not-allowed' : 'cursor-pointer'
+                        }`}>正确</label>
                     </div>
                     <div
-                      className="border border-gray-300 dark:border-gray-600 rounded-md p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center"
-                      onClick={() => handleAnswerChange(selectedQuestion.id, false)}
+                      className={`border border-gray-300 dark:border-gray-600 rounded-md p-4 transition-colors flex items-center ${showRetakeButton && !isSubmitted ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                      onClick={() => !(showRetakeButton && !isSubmitted) && handleAnswerChange(selectedQuestion.id, false)}
                     >
                       <input
                         type="radio"
@@ -839,47 +611,62 @@ export default function ExamDetailPage() {
                         className="mr-3 text-blue-600 focus:ring-blue-500 dark:text-blue-500 dark:focus:ring-blue-600"
                         value="false"
                         checked={studentAnswers[selectedQuestion.id] === false}
-                        onChange={() => handleAnswerChange(selectedQuestion.id, false)}
+                        onChange={() => !(showRetakeButton && !isSubmitted) && handleAnswerChange(selectedQuestion.id, false)}
+                        disabled={showRetakeButton && !isSubmitted}
                       />
-                      <label htmlFor={`option-${selectedQuestion.id}-false`} className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200">错误</label>
+                      <label htmlFor={`option-${selectedQuestion.id}-false`} className={`flex-1 text-gray-800 dark:text-gray-200 ${showRetakeButton && !isSubmitted ? 'cursor-not-allowed' : 'cursor-pointer'
+                        }`}>错误</label>
                     </div>
                   </div>
                 </div>
               )}
-              {selectedQuestion.type === 'xuan' && (
+              {(selectedQuestion.type === 'SINGLE_CHOICE' || selectedQuestion.type === 'xuan') && (
                 <div className="space-y-4">
                   {/* Options for multiple choice */}
                   <div className="space-y-2">
-                    {selectedQuestion.options.map((option, i) => (
-                      <div
-                        key={i}
-                        className="border border-gray-300 dark:border-gray-600 rounded-md p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center"
-                        onClick={() => handleAnswerChange(selectedQuestion.id, option.charAt(0))}
-                      >
-                        <input
-                          type="radio"
-                          name={`answer-${selectedQuestion.id}`}
-                          id={`option-${selectedQuestion.id}-${i}`}
-                          className="mr-3 text-blue-600 focus:ring-blue-500 dark:text-blue-500 dark:focus:ring-blue-600"
-                          value={option.charAt(0)}
-                          checked={studentAnswers[selectedQuestion.id] === option.charAt(0)}
-                          onChange={() => handleAnswerChange(selectedQuestion.id, option.charAt(0))}
-                        />
-                        <label htmlFor={`option-${selectedQuestion.id}-${i}`} className="flex-1 cursor-pointer text-gray-800 dark:text-gray-200">{option}</label>
-                      </div>
-                    ))}
+                    {(Array.isArray(selectedQuestion.options) ? selectedQuestion.options : []).map((option, i) => {
+                      // 处理选项格式，如果是字符串数组直接使用，如果是带前缀的格式则提取
+                      const optionText = typeof option === 'string' && option.includes(':') ?
+                        option.split(':').slice(1).join(':').trim().replace(/^"(.*)"$/, '$1') :
+                        option;
+                      const optionValue = String.fromCharCode(65 + i); // A, B, C, D
+
+                      return (
+                        <div
+                          key={i}
+                          className={`border border-gray-300 dark:border-gray-600 rounded-md p-4 transition-colors flex items-center ${showRetakeButton && !isSubmitted ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'
+                            }`}
+                          onClick={() => !(showRetakeButton && !isSubmitted) && handleAnswerChange(selectedQuestion.id, optionValue)}
+                        >
+                          <input
+                            type="radio"
+                            name={`answer-${selectedQuestion.id}`}
+                            id={`option-${selectedQuestion.id}-${i}`}
+                            className="mr-3 text-blue-600 focus:ring-blue-500 dark:text-blue-500 dark:focus:ring-blue-600"
+                            value={optionValue}
+                            checked={studentAnswers[selectedQuestion.id] === optionValue}
+                            onChange={() => !(showRetakeButton && !isSubmitted) && handleAnswerChange(selectedQuestion.id, optionValue)}
+                            disabled={showRetakeButton && !isSubmitted}
+                          />
+                          <label htmlFor={`option-${selectedQuestion.id}-${i}`} className={`flex-1 text-gray-800 dark:text-gray-200 ${showRetakeButton && !isSubmitted ? 'cursor-not-allowed' : 'cursor-pointer'
+                            }`}>
+                            {optionValue}: {optionText}
+                          </label>
+                        </div>
+                      )
+                    })}
                   </div>
                   {/* Answer input for multiple choice - Removed as selection handles it */}
                 </div>
               )}
               {/* Add area for user to input answers or code */}
-              {selectedQuestion.type === 'bian' ? (
+              {(selectedQuestion.type === 'PROGRAMMING' || selectedQuestion.type === 'bian') ? (
                 <div className="mt-6">
                   <MonacoEditor
                     height="60vh"
                     defaultLanguage="python"
                     value={studentAnswers[selectedQuestion.id] || ''}
-                    onChange={(value) => handleAnswerChange(selectedQuestion.id, value)}
+                    onChange={(value) => !showRetakeButton && handleAnswerChange(selectedQuestion.id, value)}
                     theme={editorTheme}
                     options={{
                       fontSize: 18,
@@ -901,6 +688,7 @@ export default function ExamDetailPage() {
                       autoIndent: 'full',
                       contextmenu: true,
                       fixedOverflowWidgets: true,
+                      readOnly: showRetakeButton && !isSubmitted,
                     }}
                   />
                   <div className="mt-4 flex justify-between">
@@ -912,7 +700,7 @@ export default function ExamDetailPage() {
                         }
                       }}
                       variant="secondary"
-                      disabled={questionsForExam.findIndex(q => q.id === selectedQuestion.id) === 0}
+                      disabled={questionsForExam.findIndex(q => q.id === selectedQuestion.id) === 0 || (showRetakeButton && !isSubmitted)}
                     >
                       上一题
                     </Button>
@@ -920,6 +708,7 @@ export default function ExamDetailPage() {
                       onClick={() => handleAnswerChange(selectedQuestion.id, studentAnswers[selectedQuestion.id] || '')}
                       variant="primary"
                       className="mx-2"
+                      disabled={showRetakeButton && !isSubmitted}
                     >
                       提交答案
                     </Button>
@@ -931,7 +720,7 @@ export default function ExamDetailPage() {
                         }
                       }}
                       variant="success"
-                      disabled={questionsForExam.findIndex(q => q.id === selectedQuestion.id) === questionsForExam.length - 1}
+                      disabled={questionsForExam.findIndex(q => q.id === selectedQuestion.id) === questionsForExam.length - 1 || (showRetakeButton && !isSubmitted)}
                     >
                       下一题
                     </Button>
@@ -947,7 +736,7 @@ export default function ExamDetailPage() {
                       }
                     }}
                     variant="secondary"
-                    disabled={questionsForExam.findIndex(q => q.id === selectedQuestion.id) === 0}
+                    disabled={questionsForExam.findIndex(q => q.id === selectedQuestion.id) === 0 || (showRetakeButton && !isSubmitted)}
                   >
                     上一题
                   </Button>
@@ -959,19 +748,23 @@ export default function ExamDetailPage() {
                       }
                     }}
                     variant="success"
-                    disabled={questionsForExam.findIndex(q => q.id === selectedQuestion.id) === questionsForExam.length - 1}
+                    disabled={questionsForExam.findIndex(q => q.id === selectedQuestion.id) === questionsForExam.length - 1 || (showRetakeButton && !isSubmitted)}
                   >
                     下一题
                   </Button>
                 </div>
               )}
             </div>
+          ) : questionsForExam.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 dark:text-gray-400">该试卷暂无题目</p>
+            </div>
           ) : (
             <p>请从左侧选择一个题目开始。</p>
           )}
         </div>
       </div>
-      
+
       {/* 自定义确认对话框 */}
       {showConfirmDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
