@@ -776,7 +776,7 @@ export default function ExamPage() {
         >
           <div className="mb-6">
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              您确定要删除试卷 <strong>"{examToDelete.name}"</strong> 吗？
+              您确定要删除试卷 <strong>&ldquo;{examToDelete.name}&rdquo;</strong> 吗？
             </p>
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-4">
               <div className="flex">

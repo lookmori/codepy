@@ -481,7 +481,7 @@ export default function ExamDetailPage() {
           ) : showRetakeButton && !isSubmitted ? (
             <div className="text-center py-8">
               <div className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                试卷已完成，点击右上角"重做试卷"按钮可重新答题
+                试卷已完成，点击右上角&ldquo;重做试卷&rdquo;按钮可重新答题
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-500">
                 上次得分：{previousSubmission?.score || 0}/{previousSubmission?.maxScore || 0}分
