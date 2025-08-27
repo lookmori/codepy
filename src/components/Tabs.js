@@ -12,15 +12,18 @@ const Tabs = ({ children, defaultActiveKey }) => {
   const [activeKey, setActiveKey] = useState(defaultActiveKey || null);
   const tabsRef = useRef([]);
   
-  // 过滤出所有的 Tab 组件
-  const tabComponents = React.Children.toArray(children).filter(
-    child => child.type === Tab
-  );
+  // 过滤出所有的 Tab 组件 - 兼容 MDX 环境
+  const tabComponents = React.Children.toArray(children).filter(child => {
+    // 在 MDX 中，组件类型可能不同，所以我们检查 props
+    return child && child.props && child.props.label;
+  });
+  
+
   
   // 如果没有设置默认激活的标签页，默认激活第一个
   useEffect(() => {
     if (!activeKey && tabComponents.length > 0) {
-      setActiveKey(tabComponents[0].props.key || tabComponents[0].props.label);
+      setActiveKey(tabComponents[0].props.tabKey || tabComponents[0].props.label);
     }
   }, [activeKey, tabComponents.length, tabComponents]);
   
@@ -33,7 +36,7 @@ const Tabs = ({ children, defaultActiveKey }) => {
     <div className="my-6">
       <div className="flex border-b">
         {tabComponents.map((tab, index) => {
-          const { label, key: tabKey = label, disabled } = tab.props;
+          const { label, tabKey = label, disabled } = tab.props;
           const isActive = activeKey === tabKey;
           
           return (
@@ -56,15 +59,15 @@ const Tabs = ({ children, defaultActiveKey }) => {
       
       <div className="mt-4">
         {tabComponents.map((tab) => {
-          const { key: tabKey = tab.props.label, children: tabContent } = tab.props;
+          const { tabKey = tab.props.label, children: tabContent } = tab.props;
           const isActive = activeKey === tabKey;
           
           return (
             <div 
               key={tabKey} 
-              className={`transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0 absolute h-0 w-0 overflow-hidden'}`}
+              className={`${isActive ? 'block' : 'hidden'}`}
             >
-              {isActive && tabContent}
+              {tabContent}
             </div>
           );
         })}

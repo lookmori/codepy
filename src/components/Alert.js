@@ -35,16 +35,16 @@ const Alert = ({ variant = 'info', title, children }) => {
         </div>
         <div className="ml-3">
           {title && (
-            <p className="font-medium">
+            <div className="font-medium">
               {variant === 'info' && 'Info'}
               {variant === 'success' && 'Success'}
               {variant === 'warning' && 'Warning'}
               {variant === 'danger' && 'Danger'}
               {title && ': '}
               {title}
-            </p>
+            </div>
           )}
-          <p className="text-sm mt-1">{children}</p>
+          <div className="text-sm mt-1">{children}</div>
         </div>
       </div>
     </div>
