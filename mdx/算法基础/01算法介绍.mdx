@@ -1,0 +1,499 @@
+---
+title: 算法基础介绍
+---
+
+# 算法基础介绍
+
+## 1. 什么是算法？
+
+算法是解决问题的一系列明确步骤。就像做菜的食谱一样，算法告诉计算机如何一步步完成任务。
+
+<Alert variant="info">
+算法的特点：有穷性（有限步骤）、确定性（每步都明确）、可行性（能够执行）、输入（可以有0个或多个输入）、输出（至少有一个输出）。
+</Alert>
+
+## 2. 生活中的算法例子
+
+### 2.1 泡茶算法
+
+<CodeBlock language="python">
+{`# 泡茶的算法步骤
+def make_tea():
+    """泡茶的算法"""
+    steps = [
+        "1. 准备茶叶和茶具",
+        "2. 烧开水",
+        "3. 温杯（用热水冲洗茶杯）",
+        "4. 放入适量茶叶",
+        "5. 倒入热水",
+        "6. 等待3-5分钟",
+        "7. 享用茶水"
+    ]
+    
+    for step in steps:
+        print(step)
+        
+make_tea()`}
+</CodeBlock>
+
+### 2.2 找最大数算法
+
+<CodeBlock language="python">
+{`def find_max(numbers):
+    """找到列表中的最大数"""
+    if not numbers:  # 如果列表为空
+        return None
+    
+    max_num = numbers[0]  # 假设第一个数是最大的
+    
+    for num in numbers[1:]:  # 从第二个数开始比较
+        if num > max_num:
+            max_num = num  # 更新最大数
+    
+    return max_num
+
+# 测试
+test_numbers = [3, 7, 2, 9, 1, 8, 5]
+result = find_max(test_numbers)
+print(f"最大数是: {result}")  # 输出: 最大数是: 9`}
+</CodeBlock>
+
+## 3. 算法的重要性
+
+### 3.1 为什么要学习算法？
+
+<Tabs>
+<Tab label="效率提升">
+好的算法能让程序运行得更快，处理更多数据。比如搜索算法能帮我们快速找到需要的信息。
+</Tab>
+
+<Tab label="问题解决">
+算法教会我们如何分解复杂问题，逐步解决。这种思维方式在编程和生活中都很有用。
+</Tab>
+
+<Tab label="逻辑思维">
+学习算法能培养逻辑思维能力，让我们的思考更加清晰和有条理。
+</Tab>
+</Tabs>
+
+### 3.2 算法复杂度
+
+算法的好坏通常用时间复杂度和空间复杂度来衡量：
+
+<ComplexityChart />
+
+<CodeBlock language="python">
+{`# 不同复杂度的例子
+
+# O(1) - 常数时间复杂度
+def get_first_element(arr):
+    """获取数组第一个元素，无论数组多大，时间都一样"""
+    return arr[0] if arr else None
+
+# O(n) - 线性时间复杂度  
+def find_element(arr, target):
+    """在数组中查找元素，最坏情况需要检查所有元素"""
+    for i, element in enumerate(arr):
+        if element == target:
+            return i
+    return -1
+
+# O(n²) - 平方时间复杂度
+def bubble_sort(arr):
+    """冒泡排序，需要两层循环"""
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr`}
+</CodeBlock>
+
+## 4. 常见算法分类
+
+### 4.1 排序算法
+
+<Alert variant="success">
+排序算法用于将数据按照特定顺序排列，是最基础也是最重要的算法之一。
+</Alert>
+
+<Tabs>
+<Tab label="冒泡排序">
+<AlgorithmVisualizer algorithm="bubble" />
+</Tab>
+
+<Tab label="选择排序">
+<AlgorithmVisualizer algorithm="selection" />
+</Tab>
+
+<Tab label="插入排序">
+<AlgorithmVisualizer algorithm="insertion" />
+</Tab>
+
+<Tab label="快速排序">
+<AlgorithmVisualizer algorithm="quick" />
+</Tab>
+
+<Tab label="堆排序">
+<AlgorithmVisualizer algorithm="heap" />
+</Tab>
+
+<Tab label="归并排序">
+<AlgorithmVisualizer algorithm="merge" />
+</Tab>
+
+<Tab label="Python代码">
+<CodeBlock language="python">
+{`# 冒泡排序
+def bubble_sort(arr):
+    """冒泡排序：相邻元素比较交换"""
+    n = len(arr)
+    for i in range(n - 1):
+        for j in range(n - 1 - i):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+# 选择排序
+def selection_sort(arr):
+    """选择排序：每次找到最小元素放到前面"""
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr
+
+# 插入排序
+def insertion_sort(arr):
+    """插入排序：将元素插入到已排序部分的正确位置"""
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr
+
+# 快速排序
+def quick_sort(arr, low=0, high=None):
+    """快速排序：分治法排序"""
+    if high is None:
+        high = len(arr) - 1
+    
+    if low < high:
+        pi = partition(arr, low, high)
+        quick_sort(arr, low, pi - 1)
+        quick_sort(arr, pi + 1, high)
+    return arr
+
+def partition(arr, low, high):
+    """分区函数"""
+    pivot = arr[high]
+    i = low - 1
+    
+    for j in range(low, high):
+        if arr[j] < pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+# 堆排序
+def heap_sort(arr):
+    """堆排序：利用堆的性质进行排序"""
+    n = len(arr)
+    
+    # 构建最大堆
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    
+    # 一个个从堆顶取出元素
+    for i in range(n - 1, 0, -1):
+        # 将堆顶（最大值）与末尾元素交换
+        arr[0], arr[i] = arr[i], arr[0]
+        # 重新调整堆
+        heapify(arr, i, 0)
+    
+    return arr
+
+def heapify(arr, n, i):
+    """调整堆，使其满足最大堆性质"""
+    largest = i  # 初始化最大值为根节点
+    left = 2 * i + 1  # 左子节点
+    right = 2 * i + 2  # 右子节点
+    
+    # 如果左子节点存在且大于根节点
+    if left < n and arr[left] > arr[largest]:
+        largest = left
+    
+    # 如果右子节点存在且大于当前最大值
+    if right < n and arr[right] > arr[largest]:
+        largest = right
+    
+    # 如果最大值不是根节点，则交换并继续调整
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+
+# 归并排序
+def merge_sort(arr):
+    """归并排序：分治法排序"""
+    if len(arr) <= 1:
+        return arr
+    
+    # 分割数组
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    
+    # 合并已排序的数组
+    return merge(left, right)
+
+def merge(left, right):
+    """合并两个已排序的数组"""
+    result = []
+    i = j = 0
+    
+    # 比较两个数组的元素，将较小的加入结果
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    
+    # 添加剩余元素
+    result.extend(left[i:])
+    result.extend(right[j:])
+    
+    return result
+
+# 测试所有排序算法
+import random
+test_data = [64, 34, 25, 12, 22, 11, 90]
+
+print("原始数据:", test_data)
+print("冒泡排序:", bubble_sort(test_data.copy()))
+print("选择排序:", selection_sort(test_data.copy()))
+print("插入排序:", insertion_sort(test_data.copy()))
+print("快速排序:", quick_sort(test_data.copy()))
+print("堆排序:", heap_sort(test_data.copy()))
+print("归并排序:", merge_sort(test_data.copy()))`}
+</CodeBlock>
+</Tab>
+</Tabs>
+
+### 4.2 搜索算法
+
+<Tabs>
+<Tab label="线性搜索可视化">
+<SearchVisualizer algorithm="linear" />
+</Tab>
+
+<Tab label="二分搜索可视化">
+<SearchVisualizer algorithm="binary" />
+</Tab>
+
+<Tab label="Python代码">
+<CodeBlock language="python">
+{`# 二分搜索算法（适用于已排序的数组）
+def binary_search(arr, target):
+    """二分搜索：在已排序数组中快速查找元素"""
+    left, right = 0, len(arr) - 1
+    steps = 0
+    
+    while left <= right:
+        steps += 1
+        mid = (left + right) // 2
+        print(f"第{steps}步: 检查位置{mid}，值为{arr[mid]}")
+        
+        if arr[mid] == target:
+            print(f"找到了！用了{steps}步")
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+            print(f"目标值更大，搜索右半部分")
+        else:
+            right = mid - 1
+            print(f"目标值更小，搜索左半部分")
+    
+    print(f"没找到，用了{steps}步")
+    return -1
+
+# 演示二分搜索
+sorted_array = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+print(f"在数组 {sorted_array} 中搜索 7:")
+result = binary_search(sorted_array, 7)`}
+</CodeBlock>
+</Tab>
+</Tabs>
+
+## 5. 算法思维训练
+
+### 5.1 分治思想
+
+将大问题分解为小问题，分别解决后合并结果。
+
+<CodeBlock language="python">
+{`# 计算数组和的分治算法
+def divide_and_conquer_sum(arr, start, end):
+    """使用分治思想计算数组和"""
+    # 基础情况：只有一个元素
+    if start == end:
+        return arr[start]
+    
+    # 分治：将数组分成两半
+    mid = (start + end) // 2
+    left_sum = divide_and_conquer_sum(arr, start, mid)
+    right_sum = divide_and_conquer_sum(arr, mid + 1, end)
+    
+    # 合并结果
+    return left_sum + right_sum
+
+# 测试
+numbers = [1, 2, 3, 4, 5, 6, 7, 8]
+total = divide_and_conquer_sum(numbers, 0, len(numbers) - 1)
+print(f"数组 {numbers} 的和是: {total}")`}
+</CodeBlock>
+
+### 5.2 递归思想
+
+函数调用自己来解决问题。
+
+<Tabs>
+<Tab label="阶乘递归可视化">
+<RecursionVisualizer algorithm="factorial" />
+</Tab>
+
+<Tab label="斐波那契递归可视化">
+<RecursionVisualizer algorithm="fibonacci" />
+</Tab>
+
+<Tab label="Python代码">
+<CodeBlock language="python">
+{`# 递归计算阶乘
+def factorial(n):
+    """递归计算n的阶乘"""
+    print(f"计算 {n}!")
+    
+    # 基础情况
+    if n <= 1:
+        print(f"{n}! = 1")
+        return 1
+    
+    # 递归情况
+    result = n * factorial(n - 1)
+    print(f"{n}! = {result}")
+    return result
+
+# 斐波那契数列递归实现
+def fibonacci(n):
+    """递归计算斐波那契数列第n项"""
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+# 演示递归过程
+print("计算 5! 的过程:")
+result = factorial(5)
+print(f"最终结果: {result}")
+
+print("\\n计算斐波那契数列:")
+for i in range(8):
+    print(f"fib({i}) = {fibonacci(i)}")`}
+</CodeBlock>
+</Tab>
+</Tabs>
+
+## 6. 实践练习
+
+### 6.1 练习题：找到数组中的第二大数
+
+<CodeBlock language="python">
+{`def find_second_largest(numbers):
+    """找到数组中的第二大数"""
+    if len(numbers) < 2:
+        return None
+    
+    # 去除重复元素并排序
+    unique_numbers = list(set(numbers))
+    if len(unique_numbers) < 2:
+        return None
+    
+    unique_numbers.sort(reverse=True)
+    return unique_numbers[1]
+
+# 测试
+test_cases = [
+    [1, 2, 3, 4, 5],
+    [5, 5, 4, 4, 3],
+    [10],
+    [7, 7, 7]
+]
+
+for i, case in enumerate(test_cases, 1):
+    result = find_second_largest(case)
+    print(f"测试{i}: {case} -> 第二大数: {result}")`}
+</CodeBlock>
+
+### 6.2 练习题：判断回文字符串
+
+<CodeBlock language="python">
+{`def is_palindrome(s):
+    """判断字符串是否为回文"""
+    # 转换为小写并移除空格
+    s = s.lower().replace(" ", "")
+    
+    # 使用双指针法
+    left, right = 0, len(s) - 1
+    
+    while left < right:
+        if s[left] != s[right]:
+            return False
+        left += 1
+        right -= 1
+    
+    return True
+
+# 测试回文检测
+test_strings = [
+    "racecar",
+    "A man a plan a canal Panama",
+    "race a car",
+    "hello"
+]
+
+for string in test_strings:
+    result = is_palindrome(string)
+    print(f"'{string}' 是回文吗? {result}")`}
+</CodeBlock>
+
+## 7. 排序算法性能对比
+
+<SortingComparison />
+
+## 8. 总结
+
+<Alert variant="success">
+算法是编程的核心，掌握基本算法思想能帮助我们：
+- 更好地分析和解决问题
+- 写出更高效的代码
+- 培养逻辑思维能力
+- 为学习更复杂的算法打下基础
+</Alert>
+
+### 学习建议
+
+1. **从简单开始**：先掌握基础的排序、搜索算法
+2. **多练习**：通过编程练习加深理解
+3. **分析复杂度**：学会分析算法的时间和空间复杂度
+4. **理解思想**：重点理解算法背后的思维方式
+5. **实际应用**：尝试用算法解决实际问题
+
+下一节我们将学习具体的排序算法，包括冒泡排序、选择排序、插入排序等。
